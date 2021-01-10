@@ -1,10 +1,10 @@
-package com.jtran98.bugtracker;
+package com.jtran98.BugTracker;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BugtrackerApplicationTests {
+class BugTrackerApplicationTests {
 
 	@Test
 	void contextLoads() {

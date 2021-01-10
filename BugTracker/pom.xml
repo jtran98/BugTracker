@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jtran98</groupId>
-	<artifactId>bugtracker</artifactId>
+	<artifactId>BugTracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bugtracker</name>
-	<description>Bug Tracker Web Application</description>
+	<name>BugTracker</name>
+	<description>Spring Bug Tracker Web Application</description>
 
 	<properties>
 		<java.version>11</java.version>

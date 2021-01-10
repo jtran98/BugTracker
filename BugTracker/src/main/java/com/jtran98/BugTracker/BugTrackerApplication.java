@@ -1,12 +1,13 @@
-package com.jtran98.bugtracker;
+package com.jtran98.BugTracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BugtrackerApplication {
+public class BugTrackerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BugtrackerApplication.class, args);
+		SpringApplication.run(BugTrackerApplication.class, args);
 	}
+
 }
