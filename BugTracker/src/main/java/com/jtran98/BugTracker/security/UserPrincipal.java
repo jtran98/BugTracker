@@ -17,6 +17,11 @@ public class UserPrincipal implements UserDetails{
 	public UserPrincipal(User user) {
 		this.user = user;
 	}
+	public String getFirstName() {
+		return user.getFirstName();
+	}
+	
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		ArrayList<GrantedAuthority> authorities = new ArrayList<>();

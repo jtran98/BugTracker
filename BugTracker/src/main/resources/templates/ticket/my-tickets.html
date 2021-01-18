@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <title>Bug Tracker</title>
@@ -7,7 +8,7 @@
 <body>
 
 <div align="center">
-	<h1>My Tickets</h1>
+	<h1 th:text="${#authentication.principal.firstName} +'\'s Tickets'">My Tickets</h1>
 	<a th:href = "@{/tickets/submit-new-ticket}">New Ticket</a>
 	<table border="1">
 		<thead>

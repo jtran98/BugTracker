@@ -30,7 +30,7 @@ public class BugTrackerSecurityConfiguration extends WebSecurityConfigurerAdapte
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-			.antMatchers("/index").authenticated()
+			.antMatchers("/index").permitAll()
 			.antMatchers("/tickets/my-tickets/**").hasAnyAuthority(AuthorityEnum.DEVELOPER.toString(), AuthorityEnum.PROJECTMANAGER.toString(), AuthorityEnum.ADMINISTRATOR.toString())
 			.antMatchers("/tickets/project-tickets/**").hasAnyAuthority(AuthorityEnum.DEVELOPER.toString(), AuthorityEnum.PROJECTMANAGER.toString(), AuthorityEnum.ADMINISTRATOR.toString())
 			.antMatchers("/tickets/delete-ticket/**").hasAnyAuthority(AuthorityEnum.PROJECTMANAGER.toString(), AuthorityEnum.ADMINISTRATOR.toString())
@@ -38,7 +38,7 @@ public class BugTrackerSecurityConfiguration extends WebSecurityConfigurerAdapte
 			.formLogin()
 			.loginPage("/login").permitAll()
 			.and()
-			.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login")
+			.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/index")
 			.and()
 			.rememberMe().tokenValiditySeconds(2592000).rememberMeParameter("rememberMe");
 	}

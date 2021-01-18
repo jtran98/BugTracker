@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <title>Bug Tracker</title>
@@ -8,11 +9,15 @@
 
 <div align="center">
 	<h1>Welcome!</h1>
-	<a href = "/tickets/my-tickets/1">Go to my tickets (DEFAULT TO 1)</a>
-	<a href = "/tickets/project-tickets/1">Go to project tickets(DEFAULT TO 1)</a>
+	<label sec:authorize="isAnonymous()">You are logged out</label><br>
 	<form form-method="post" th:action="@{/logout}">
-		<button>Logout</button>
+		<button sec:authorize="isAuthenticated()">Logout</button>
 	</form>
+	<form form-method="post" th:action="@{/login}">
+		<button sec:authorize="isAnonymous()" th:href="@{/login}">Login</button>
+	</form>
+	<a href = "/tickets/my-tickets/1" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Go to my tickets (DEFAULT TO 1)</a>
+	<a href = "/tickets/project-tickets/1" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Go to project tickets(DEFAULT TO 1)</a>
 </div>
 </body>
 </html>
