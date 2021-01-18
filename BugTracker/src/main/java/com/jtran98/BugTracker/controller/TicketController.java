@@ -24,7 +24,6 @@ public class TicketController {
 	@Autowired
 	private TicketService ticketService;
 	
-
 	/**
 	 * Gets all tickets
 	 * @param model
