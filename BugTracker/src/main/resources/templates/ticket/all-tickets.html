@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Bug Tracker</title>
+</head>
+<body>
+
+<div align="center">
+	<h1>All Tickets</h1>
+	<a th:href = "@{/tickets/submit-new-ticket}">New Ticket</a>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Description</th>
+				<th>Developer ID</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="ticket : ${allTickets}">
+				<td th:text="${ticket.title}"></td>
+				<td th:text="${ticket.description}"></td>
+				<td th:text="${ticket.assignedUser?.userId}"></td>
+				<td th:text="${ticket.status}"></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+</body>
+</html>

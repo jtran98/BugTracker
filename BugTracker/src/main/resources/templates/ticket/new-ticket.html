@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Bug Tracker</title>
+</head>
+<body>
+	<div>
+		<h1>New Ticket</h1>
+		<hr>
+		<h2>Save Ticket</h2>
+		<form th:action="@{/tickets/save-ticket}" th:object = "${newTicket}", method="POST">
+			<input type="text" th:field = "*{title}" placeholder="Ticket Title">
+			<input type="text" th:field = "*{description}" placeholder="Ticket Description">
+			<select th:field="*{type}">
+				<option th:each="ticketType : ${T(com.jtran98.BugTracker.enums.TypeEnum).values()}"
+		            th:value="${ticketType}"
+		            th:text="${ticketType}">
+			    </option>
+			</select>
+			<select th:field="*{priority}">
+				<option th:each="ticketPriority : ${T(com.jtran98.BugTracker.enums.PriorityEnum).values()}"
+		            th:value="${ticketPriority}"
+		            th:text="${ticketPriority}">
+			    </option>
+			</select>
+			<select th:field="*{status}">
+				<option th:each="ticketStatus : ${T(com.jtran98.BugTracker.enums.StatusEnum).values()}"
+		            th:value="${ticketStatus}"
+		            th:text="${ticketStatus}">
+			    </option>
+			</select>
+			<button type="submit">Create Ticket</button>
+		</form>
+	</div>
+</body>
+</html>

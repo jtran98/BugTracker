@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Bug Tracker</title>
+</head>
+<body>
+	<div>
+		<h1>Update Ticket</h1>
+		<hr>
+		<h2>Save Changes</h2>
+		<form th:action="@{/tickets/save-ticket}" th:object = "${updateTicket}" method="POST">
+		
+			<!-- This field is required, otherwise the form creates NEW tickets instead of updating an existing one-->
+			<input type = "hidden" th:field="*{ticketId}">
+			<!-- Required, otherwise these will be set back to null -->
+			<input type = "hidden" th:field="*{creationDate}">
+			<input type = "hidden" th:field="*{projectId}">
+			
+			<input type="text" th:field = "*{title}" placeholder="Ticket Title">
+			<input type="text" th:field = "*{description}" placeholder="Ticket Description">
+			<select th:field="*{type}">
+				<option th:each="ticketType : ${T(com.jtran98.BugTracker.enums.TypeEnum).values()}"
+		            th:value="${ticketType}"
+		            th:text="${ticketType}">
+			    </option>
+			</select>
+			<select th:field="*{priority}">
+				<option th:each="ticketPriority : ${T(com.jtran98.BugTracker.enums.PriorityEnum).values()}"
+		            th:value="${ticketPriority}"
+		            th:text="${ticketPriority}">
+			    </option>
+			</select>
+			<select th:field="*{status}">
+				<option th:each="ticketStatus : ${T(com.jtran98.BugTracker.enums.StatusEnum).values()}"
+		            th:value="${ticketStatus}"
+		            th:text="${ticketStatus}">
+			    </option>
+			</select>
+			<!-- Todo: add options to change the developer/project ids, dependent on user role
+			 eg: dev can choose to take/untake ticket, PM/admin can assign others to tickets and move the ticket to a different project-->
+			<!-- Todo: add a th:action mapping to an automatic log update function -->
+			<button type="submit">Update Ticket</button>
+		</form>
+	</div>
+</body>
+</html>
