@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -20,37 +23,43 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="user_id", nullable = false)
 	private long userId;
+	
 	@OneToMany(mappedBy = "assignedUser")
 	private Set<Ticket> assignedTickets;
-	@OneToMany(mappedBy = "assignedUser")
+	@OneToMany(mappedBy = "submitter")
 	private Set<Ticket> submittedTickets;
+	
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private Project projectTeam;
+	
 	@Column(nullable = false)
 	private String username;
 	@Column(nullable = false)
 	private String password;
 	
-	private long assignedProject;
 	private String firstName;
 	private String lastName;
 	private boolean isActive;
 	private AuthorityEnum role;
 	
 	public User() {
-	}	
-	public User(long userId, Set<Ticket> assignedTickets, Set<Ticket> submittedTickets, String username,
-			String password, long assignedProject, String firstName, String lastName, boolean isActive, AuthorityEnum role) {
+	}
+	public User(long userId, Set<Ticket> assignedTickets, Set<Ticket> submittedTickets, Project projectTeam,
+			String username, String password, String firstName, String lastName, boolean isActive, AuthorityEnum role) {
 		super();
 		this.userId = userId;
 		this.assignedTickets = assignedTickets;
 		this.submittedTickets = submittedTickets;
+		this.projectTeam = projectTeam;
 		this.username = username;
 		this.password = password;
-		this.assignedProject = assignedProject;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.isActive = isActive;
 		this.role = role;
 	}
+	
 	public long getUserId() {
 		return userId;
 	}
@@ -69,6 +78,12 @@ public class User {
 	public void setSubmittedTickets(Set<Ticket> submittedTickets) {
 		this.submittedTickets = submittedTickets;
 	}
+	public Project getProjectTeam() {
+		return projectTeam;
+	}
+	public void setProjectTeam(Project projectTeam) {
+		this.projectTeam = projectTeam;
+	}
 	public String getUsername() {
 		return username;
 	}
@@ -80,12 +95,6 @@ public class User {
 	}
 	public void setPassword(String password) {
 		this.password = password;
-	}
-	public long getAssignedProject() {
-		return assignedProject;
-	}
-	public void setAssignedProject(long assignedProject) {
-		this.assignedProject = assignedProject;
 	}
 	public String getFirstName() {
 		return firstName;
@@ -99,7 +108,7 @@ public class User {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public boolean getActive() {
+	public boolean isActive() {
 		return isActive;
 	}
 	public void setActive(boolean isActive) {
@@ -111,6 +120,7 @@ public class User {
 	public void setRole(AuthorityEnum role) {
 		this.role = role;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

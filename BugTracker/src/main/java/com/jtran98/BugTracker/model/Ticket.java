@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.jtran98.BugTracker.enums.PriorityEnum;
@@ -28,47 +29,68 @@ public class Ticket {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="ticket_id", nullable = false)
 	private long ticketId;
+	
+	@OneToMany(mappedBy = "logOrigin")
+	private Set<LogEntry> logEntryList;
+	@OneToMany(mappedBy = "commentOrigin")
+	private Set<CommentEntry> commentList;
+	
 	@ManyToOne
-	@JoinColumn(name = "assigned_user")
+	@JoinColumn(name = "assigned_id")
 	private User assignedUser;
 	@ManyToOne
-	@JoinColumn(name = "submitter")
+	@JoinColumn(name = "submitter_id", nullable = false)
 	private User submitter;
-//	private Set<LogEntry> historyList;
-//	private Set<CommentEntry> commentList;
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private Project projectSource;
 	
-	private long projectId;
 	private String title;
 	private String description;
 	private PriorityEnum priority;
 	private StatusEnum status;
 	private TypeEnum type;
 	private String creationDate;
-	//most recent update date
-	private String updateDate;
+	private String mostRecentUpdateDate;
 	
 	public Ticket() {
 	}
-	public Ticket(long ticketId, User assignedUser, User submitter, long projectId, String title, String description,
-			PriorityEnum priority, StatusEnum status, TypeEnum type, String creationDate, String updateDate) {
+	public Ticket(long ticketId, Set<LogEntry> logEntryList, Set<CommentEntry> commentList, User assignedUser,
+			User submitter, Project projectSource, String title, String description, PriorityEnum priority,
+			StatusEnum status, TypeEnum type, String creationDate, String mostRecentUpdateDate) {
 		super();
 		this.ticketId = ticketId;
+		this.logEntryList = logEntryList;
+		this.commentList = commentList;
 		this.assignedUser = assignedUser;
 		this.submitter = submitter;
-		this.projectId = projectId;
+		this.projectSource = projectSource;
 		this.title = title;
 		this.description = description;
 		this.priority = priority;
 		this.status = status;
 		this.type = type;
 		this.creationDate = creationDate;
-		this.updateDate = updateDate;
+		this.mostRecentUpdateDate = mostRecentUpdateDate;
 	}
+	
 	public long getTicketId() {
 		return ticketId;
 	}
 	public void setTicketId(long ticketId) {
 		this.ticketId = ticketId;
+	}
+	public Set<LogEntry> getLogEntryList() {
+		return logEntryList;
+	}
+	public void setLogEntryList(Set<LogEntry> logEntryList) {
+		this.logEntryList = logEntryList;
+	}
+	public Set<CommentEntry> getCommentList() {
+		return commentList;
+	}
+	public void setCommentList(Set<CommentEntry> commentList) {
+		this.commentList = commentList;
 	}
 	public User getAssignedUser() {
 		return assignedUser;
@@ -82,11 +104,11 @@ public class Ticket {
 	public void setSubmitter(User submitter) {
 		this.submitter = submitter;
 	}
-	public long getProjectId() {
-		return projectId;
+	public Project getProjectSource() {
+		return projectSource;
 	}
-	public void setProjectId(long projectId) {
-		this.projectId = projectId;
+	public void setProjectSource(Project projectSource) {
+		this.projectSource = projectSource;
 	}
 	public String getTitle() {
 		return title;
@@ -124,12 +146,13 @@ public class Ticket {
 	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
 	}
-	public String getUpdateDate() {
-		return updateDate;
+	public String getMostRecentUpdateDate() {
+		return mostRecentUpdateDate;
 	}
-	public void setUpdateDate(String updateDate) {
-		this.updateDate = updateDate;
+	public void setMostRecentUpdateDate(String mostRecentUpdateDate) {
+		this.mostRecentUpdateDate = mostRecentUpdateDate;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

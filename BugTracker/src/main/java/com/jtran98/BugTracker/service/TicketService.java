@@ -63,7 +63,7 @@ public class TicketService{
 	 * Get all tickets that belong to a specific project
 	 */
 	public List<Ticket> getTicketsOfProject(long id){
-		return ticketRepository.findByProjectId(id);
+		return ticketRepository.findByProjectSource_ProjectId(id);
 	}
 	
 }

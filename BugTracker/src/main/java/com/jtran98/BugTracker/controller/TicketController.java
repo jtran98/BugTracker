@@ -60,19 +60,10 @@ public class TicketController {
 		if(ticket.getCreationDate() == null) {
 			ticket.setCreationDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 			ticket.setStatus(StatusEnum.OPEN);
-			ticket.setUpdateDate("N/A");
-			
-			/**
-			 * TAKE THIS CODE OUT AFTER ROLE AUTH IS ADDED
-			 */
-			User tempUser = new User();
-			tempUser.setUserId(1);
-			ticket.setAssignedUser(tempUser);
-			ticket.setProjectId(1);
-			ticket.setSubmitter(tempUser);
+			ticket.setMostRecentUpdateDate("N/A");
 		}
 		else {
-			ticket.setUpdateDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+			ticket.setMostRecentUpdateDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 		}
 		//TODO: Add these values after adding authentication (make them tie to user's id/project/etc UNLESS THEY'RE ADMIN
 //		ticket.setAssignedId(1);
