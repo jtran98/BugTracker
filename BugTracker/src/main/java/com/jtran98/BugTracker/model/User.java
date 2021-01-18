@@ -43,8 +43,7 @@ public class User {
 	private boolean isActive;
 	private AuthorityEnum role;
 	
-	public User() {
-	}
+	public User() {}
 	public User(long userId, Set<Ticket> assignedTickets, Set<Ticket> submittedTickets, Project projectTeam,
 			String username, String password, String firstName, String lastName, boolean isActive, AuthorityEnum role) {
 		super();

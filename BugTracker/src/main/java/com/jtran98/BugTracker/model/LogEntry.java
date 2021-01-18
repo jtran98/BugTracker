@@ -30,8 +30,7 @@ public class LogEntry {
 	private String newValue;
 	private String date;
 	
-	public LogEntry() {
-	}
+	public LogEntry() {}
 	public LogEntry(long logId, User updater, Ticket logOrigin, String property, String oldValue, String newValue,
 			String date) {
 		super();

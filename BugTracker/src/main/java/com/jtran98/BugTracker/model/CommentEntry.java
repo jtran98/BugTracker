@@ -29,8 +29,7 @@ public class CommentEntry {
 	private String description;
 	private String date;
 	
-	public CommentEntry() {
-	}
+	public CommentEntry() {}
 	public CommentEntry(long commentId, User commenter, Ticket commentOrigin, String description, String date) {
 		super();
 		this.commentId = commentId;

@@ -53,8 +53,7 @@ public class Ticket {
 	private String creationDate;
 	private String mostRecentUpdateDate;
 	
-	public Ticket() {
-	}
+	public Ticket() {}
 	public Ticket(long ticketId, Set<LogEntry> logEntryList, Set<CommentEntry> commentList, User assignedUser,
 			User submitter, Project projectSource, String title, String description, PriorityEnum priority,
 			StatusEnum status, TypeEnum type, String creationDate, String mostRecentUpdateDate) {

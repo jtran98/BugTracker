@@ -33,8 +33,7 @@ public class Project {
 	
 	private String projectName;
 	
-	public Project() {
-	}	
+	public Project() {}	
 	public Project(long projectId, Set<User> membersList, Set<Ticket> ticketsList, String projectName) {
 		super();
 		this.projectId = projectId;
