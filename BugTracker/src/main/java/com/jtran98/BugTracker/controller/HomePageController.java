@@ -12,6 +12,7 @@ public class HomePageController {
 	public String login() {
 		return "/login";
 	}
+	
 	@GetMapping("index")
 	public String viewHomePage() {
 		return "/index";
