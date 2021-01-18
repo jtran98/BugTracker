@@ -6,8 +6,10 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import com.jtran98.BugTracker.enums.AuthorityEnum;
+import com.jtran98.BugTracker.model.Project;
 import com.jtran98.BugTracker.model.User;
 
 public class UserPrincipal implements UserDetails{
@@ -17,11 +19,24 @@ public class UserPrincipal implements UserDetails{
 	public UserPrincipal(User user) {
 		this.user = user;
 	}
+	public User getUser() {
+		return this.user;
+	}
 	public String getFirstName() {
 		return user.getFirstName();
 	}
-	
-	
+	public Long getUserId() {
+		return user.getUserId();
+	}
+	public Long getProjectId() {
+		if(user.getProjectTeam() == null) {
+			return (long) -1;
+		}
+		return user.getProjectTeam().getProjectId();
+	}
+	public Project getProjectTeam() {
+		return user.getProjectTeam();
+	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		ArrayList<GrantedAuthority> authorities = new ArrayList<>();

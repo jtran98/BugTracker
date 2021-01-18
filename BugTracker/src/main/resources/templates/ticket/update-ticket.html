@@ -15,7 +15,10 @@
 			<input type = "hidden" th:field="*{ticketId}">
 			<!-- Required, otherwise these will be set back to null -->
 			<input type = "hidden" th:field="*{creationDate}">
-			<input type = "hidden" th:field="*{projectId}">
+			<input type = "hidden" th:field="*{projectSource}">
+			<input type = "hidden" th:field="*{submitter}">
+			<input type = "hidden" th:field="*{assignedUser}">
+			
 			
 			<input type="text" th:field = "*{title}" placeholder="Ticket Title">
 			<input type="text" th:field = "*{description}" placeholder="Ticket Description">

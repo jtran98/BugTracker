@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.jtran98.BugTracker.enums.StatusEnum;
 import com.jtran98.BugTracker.model.Ticket;
-import com.jtran98.BugTracker.model.User;
+import com.jtran98.BugTracker.security.UserPrincipal;
 import com.jtran98.BugTracker.service.TicketService;
 
 @Controller
@@ -24,24 +24,39 @@ public class TicketController {
 	@Autowired
 	private TicketService ticketService;
 	
-	//get all tickets (admins)
+
+	/**
+	 * Gets all tickets
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/all")
 	public String viewHomePage(Model model) {
 		model.addAttribute("listTickets", ticketService.getAllTickets());
 		return "/ticket/all-tickets";
 	}
 	
-	//Get tickets by assignedId, (mainly for devs)
-	@GetMapping("/my-tickets/{id}")
-	public String getTicketsByAssignedId(@PathVariable (value = "id") long id, Model model) {
-		model.addAttribute("myTickets", ticketService.getTicketsOfAssignedUser(id));
+	/**
+	 * Gets all tickets the currently authenticated user is assigned to
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/my-tickets")
+	public String getAssignedTicketsOfCurrentUser(Model model, Authentication auth) {
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		model.addAttribute("myTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
 		return "/ticket/my-tickets";
 	}
 	
-	//get tickets by project ID (mainly for PMs)
-	@GetMapping("/project-tickets/{id}")
-	public String getTicketsByProjectId(@PathVariable (value = "id") long id, Model model) {
-		model.addAttribute("projectTickets", ticketService.getTicketsOfProject(id));
+	/**
+	 * Gets all tickets the of the currently authenticated user's project
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/project-tickets")
+	public String getTicketsByProjectId(Model model, Authentication auth) {
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		model.addAttribute("projectTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));
 		return "/ticket/project-tickets";
 	}
 	
@@ -53,26 +68,19 @@ public class TicketController {
 	}
 	
 	@PostMapping("/save-ticket")
-	public String makeNewTicket(@ModelAttribute("newTicket") Ticket ticket, Model model) {
-		
-		//automatically fills some fields that do not appear in the form
-		//if new ticket, set creation date and status to OPEN. otherwise update the update date
+	public String makeNewTicket(@ModelAttribute("newTicket") Ticket ticket, Model model, Authentication auth) {
 		if(ticket.getCreationDate() == null) {
 			ticket.setCreationDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
-			ticket.setStatus(StatusEnum.OPEN);
 			ticket.setMostRecentUpdateDate("N/A");
 		}
 		else {
 			ticket.setMostRecentUpdateDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 		}
-		//TODO: Add these values after adding authentication (make them tie to user's id/project/etc UNLESS THEY'RE ADMIN
-//		ticket.setAssignedId(1);
-//		ticket.setProjectId(1);
-//		ticket.setSubmitterId(1);
-		
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		ticket.setProjectSource(userPrincipal.getProjectTeam());
+		ticket.setSubmitter(userPrincipal.getUser());
 		ticketService.saveTicket(ticket);
-		//TODO: make this redirect back to user's tickets after adding auth
-		return "redirect:/index";
+		return "redirect:/tickets/my-tickets";
 	}
 	
 	@GetMapping("/update-ticket/{id}")

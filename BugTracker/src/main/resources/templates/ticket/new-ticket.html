@@ -10,6 +10,9 @@
 		<hr>
 		<h2>Save Ticket</h2>
 		<form th:action="@{/tickets/save-ticket}" th:object = "${newTicket}", method="POST">
+		
+			<input type="hidden" th:value="${#authentication.principal.userId}">
+			
 			<input type="text" th:field = "*{title}" placeholder="Ticket Title">
 			<input type="text" th:field = "*{description}" placeholder="Ticket Description">
 			<select th:field="*{type}">

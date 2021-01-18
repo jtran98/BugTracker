@@ -16,8 +16,8 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 	<form form-method="post" th:action="@{/login}">
 		<button sec:authorize="isAnonymous()" th:href="@{/login}">Login</button>
 	</form>
-	<a href = "/tickets/my-tickets/1" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Go to my tickets (DEFAULT TO 1)</a>
-	<a href = "/tickets/project-tickets/1" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Go to project tickets(DEFAULT TO 1)</a>
+	<a href = "/tickets/my-tickets" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Go to my tickets (DEFAULT TO 1)</a>
+	<a href = "/tickets/project-tickets" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Go to project tickets(DEFAULT TO 1)</a>
 </div>
 </body>
 </html>

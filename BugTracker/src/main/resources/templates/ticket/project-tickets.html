@@ -12,7 +12,7 @@
 	<table border="1">
 		<thead>
 			<tr>
-				<th>Project ID</th>
+				<th>Project Name</th>
 				<th>Title</th>
 				<th>Description</th>
 				<th>Developer ID</th>
@@ -21,7 +21,7 @@
 		</thead>
 		<tbody>
 			<tr th:each="ticket : ${projectTickets}">
-				<td th:text="${ticket.projectId}"></td>
+				<td th:text="${ticket.projectSource?.projectName}"></td>
 				<td th:text="${ticket.title}"></td>
 				<td th:text="${ticket.description}"></td>
 				<td th:text="${ticket.assignedUser?.userId}"></td>		
