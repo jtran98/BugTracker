@@ -37,6 +37,7 @@ public class BugTrackerSecurityConfiguration extends WebSecurityConfigurerAdapte
 			.and()
 			.formLogin()
 			.loginPage("/login").permitAll()
+			.failureUrl("/login-failed")
 			.and()
 			.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/index")
 			.and()

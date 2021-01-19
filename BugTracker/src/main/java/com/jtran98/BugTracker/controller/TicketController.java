@@ -40,11 +40,11 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/my-tickets")
+	@GetMapping("/assigned-tickets")
 	public String getAssignedTicketsOfCurrentUser(Model model, Authentication auth) {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 		model.addAttribute("myTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
-		return "/ticket/my-tickets";
+		return "/ticket/assigned-tickets";
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class TicketController {
 		ticket.setProjectSource(userPrincipal.getProjectTeam());
 		ticket.setSubmitter(userPrincipal.getUser());
 		ticketService.saveTicket(ticket);
-		return "redirect:/tickets/my-tickets";
+		return "redirect:/tickets/assigned-tickets";
 	}
 	
 	@GetMapping("/update-ticket/{id}")
