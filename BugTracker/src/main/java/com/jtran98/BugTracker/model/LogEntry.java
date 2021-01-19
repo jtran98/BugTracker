@@ -31,17 +31,6 @@ public class LogEntry {
 	private String date;
 	
 	public LogEntry() {}
-	public LogEntry(long logId, User updater, Ticket logOrigin, String property, String oldValue, String newValue,
-			String date) {
-		super();
-		this.logId = logId;
-		this.updater = updater;
-		this.logOrigin = logOrigin;
-		this.property = property;
-		this.oldValue = oldValue;
-		this.newValue = newValue;
-		this.date = date;
-	}
 	
 	public long getLogId() {
 		return logId;

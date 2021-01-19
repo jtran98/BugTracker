@@ -44,20 +44,6 @@ public class User {
 	private AuthorityEnum role;
 	
 	public User() {}
-	public User(long userId, Set<Ticket> assignedTickets, Set<Ticket> submittedTickets, Project projectTeam,
-			String username, String password, String firstName, String lastName, boolean isActive, AuthorityEnum role) {
-		super();
-		this.userId = userId;
-		this.assignedTickets = assignedTickets;
-		this.submittedTickets = submittedTickets;
-		this.projectTeam = projectTeam;
-		this.username = username;
-		this.password = password;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.isActive = isActive;
-		this.role = role;
-	}
 	
 	public long getUserId() {
 		return userId;

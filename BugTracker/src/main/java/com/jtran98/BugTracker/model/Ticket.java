@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -56,25 +57,6 @@ public class Ticket {
 	public Ticket() {
 		this.projectSource = new Project();
 	}
-	public Ticket(long ticketId, Set<LogEntry> logEntryList, Set<CommentEntry> commentList, User assignedUser,
-			User submitter, Project projectSource, String title, String description, PriorityEnum priority,
-			StatusEnum status, TypeEnum type, String creationDate, String mostRecentUpdateDate) {
-		super();
-		this.ticketId = ticketId;
-		this.logEntryList = logEntryList;
-		this.commentList = commentList;
-		this.assignedUser = assignedUser;
-		this.submitter = submitter;
-		this.projectSource = projectSource;
-		this.title = title;
-		this.description = description;
-		this.priority = priority;
-		this.status = status;
-		this.type = type;
-		this.creationDate = creationDate;
-		this.mostRecentUpdateDate = mostRecentUpdateDate;
-	}
-	
 	public long getTicketId() {
 		return ticketId;
 	}

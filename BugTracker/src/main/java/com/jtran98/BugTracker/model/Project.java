@@ -35,13 +35,6 @@ public class Project {
 		this.projectId = -1;
 		this.projectName = "No project";
 	}
-	public Project(long projectId, Set<User> membersList, Set<Ticket> ticketsList, String projectName) {
-		super();
-		this.projectId = projectId;
-		this.membersList = membersList;
-		this.ticketsList = ticketsList;
-		this.projectName = projectName;
-	}
 	
 	public long getProjectId() {
 		return projectId;

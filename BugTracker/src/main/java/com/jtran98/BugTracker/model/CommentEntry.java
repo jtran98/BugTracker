@@ -30,14 +30,6 @@ public class CommentEntry {
 	private String date;
 	
 	public CommentEntry() {}
-	public CommentEntry(long commentId, User commenter, Ticket commentOrigin, String description, String date) {
-		super();
-		this.commentId = commentId;
-		this.commenter = commenter;
-		this.commentOrigin = commentOrigin;
-		this.description = description;
-		this.date = date;
-	}
 	
 	public long getCommentId() {
 		return commentId;
