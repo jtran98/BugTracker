@@ -15,16 +15,18 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-	<li class="nav-item">
-	    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}">Log out</a>
-	</li>
-	<li class="nav-item">
-	    <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}">Log in</a>
+	<li class="nav-item dropdown">
+		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+			<a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/login}">Log in</a>
+			<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/user/settings}">Settings</a>
+            <a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/logout}">Log out</a>
+        </div>
 	</li>
 	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Project</a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/project/project-tickets">Tickets</a>
+			<a class="dropdown-item" href = "/tickets/project-tickets">Tickets</a>
             <a class="dropdown-item" href= "/project/project-members" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')">Members</a>
         </div>
 	</li>
@@ -41,42 +43,49 @@
 			<a class="dropdown-item" href= "/management/create-user">Create User</a>
             <a class="dropdown-item" href= "/management/manage-users">Manage Users</a>
             <a class="dropdown-item" href= "/management/manage-tickets">Manage Tickets</a>
+            <a class="dropdown-item" href= "/management/manage-projects">Manage Projects</a>
         </div>
 	</li>
     </ul>
   </div>
 </nav>
-	<div>
-		<h1>New Ticket</h1>
-		<hr>
-		<h2>Save Ticket</h2>
-		<form th:action="@{/tickets/save-ticket}" th:object = "${newTicket}", method="POST">
-		
-			<input type="hidden" th:value="${#authentication.principal.userId}">
-			
-			<input type="text" th:field = "*{title}" placeholder="Ticket Title">
-			<input type="text" th:field = "*{description}" placeholder="Ticket Description">
-			<select th:field="*{type}">
-				<option th:each="ticketType : ${T(com.jtran98.BugTracker.enums.TypeEnum).values()}"
-		            th:value="${ticketType}"
-		            th:text="${ticketType}">
-			    </option>
-			</select>
-			<select th:field="*{priority}">
-				<option th:each="ticketPriority : ${T(com.jtran98.BugTracker.enums.PriorityEnum).values()}"
-		            th:value="${ticketPriority}"
-		            th:text="${ticketPriority}">
-			    </option>
-			</select>
-			<select th:field="*{status}">
-				<option th:each="ticketStatus : ${T(com.jtran98.BugTracker.enums.StatusEnum).values()}"
-		            th:value="${ticketStatus}"
-		            th:text="${ticketStatus}">
-			    </option>
-			</select>
-			<button type="submit">Create Ticket</button>
-		</form>
-	</div>
+
+
+
+<div align="center">
+	<br>
+	<h1 th:if="${viewProjectTickets}" th:text="'Project ' + ${#authentication.principal.projectTeam?.projectName} +'\'s Tickets'"></h1>
+	<h1 th:if="${viewSubmittedTickets}" th:text="${#authentication.principal.firstName} +'\'s Submitted Tickets'"></h1>
+	<h1 th:if="${viewAssignedTickets}" th:text="${#authentication.principal.firstName} +'\'s Assigned Tickets'"></h1>
+	<a th:href = "@{/tickets/submit-new-ticket}">Submit Ticket</a>
+	<br><br>
+	<table class="table table-bordered table-hover">
+	  <thead>
+	    <tr>
+	      <th scope="col">Priority</th>
+	      <th scope="col">Title</th>
+	      <th scope="col">Description</th>
+	      <th scope="col">Type</th>
+	      <th scope="col">Submitter</th>
+	      <th scope="col">Status</th>
+	      <th scope="col" colspan="2" align="center">Actions</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr th:each="ticket : ${viewTickets}">
+	      <td th:text="${ticket.priority}" scope="row"></td>
+	      <td th:text="${ticket.title}" scope="row"></td>
+	      <td th:text="${ticket.description}" scope="row"></td>
+	      <td th:text="${ticket.type}" scope="row"></td>
+	      <td th:text="${ticket.submitter?.firstName} + ' ' + ${ticket.submitter?.lastName}" scope="row"></td>
+	      <td th:text="${ticket.status}" scope="row"></td>
+	      <td><a th:href="@{/tickets/view-details/{id}(id=${ticket.ticketId})}">Details</a></td>
+	      <td><a th:href="@{/tickets/update-ticket/{id}(id=${ticket.ticketId})}">Update</a></td>
+	    </tr>
+	  </tbody>
+	</table>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </body>

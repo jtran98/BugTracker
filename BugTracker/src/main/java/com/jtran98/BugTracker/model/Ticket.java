@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.jtran98.BugTracker.enums.PriorityEnum;
@@ -46,6 +47,9 @@ public class Ticket {
 	@JoinColumn(name = "project_id")
 	private Project projectSource;
 	
+	@OneToOne(mappedBy = "fileOrigin")
+	private TicketFile ticketFile;
+	
 	private String title;
 	private String description;
 	private PriorityEnum priority;
@@ -62,6 +66,12 @@ public class Ticket {
 	}
 	public void setTicketId(long ticketId) {
 		this.ticketId = ticketId;
+	}
+	public TicketFile getTicketFile() {
+		return ticketFile;
+	}
+	public void setTicketFile(TicketFile ticketFile) {
+		this.ticketFile = ticketFile;
 	}
 	public Set<LogEntry> getLogEntryList() {
 		return logEntryList;

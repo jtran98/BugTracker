@@ -31,8 +31,8 @@ public class BugTrackerSecurityConfiguration extends WebSecurityConfigurerAdapte
 		http
 			.authorizeRequests()
 			.antMatchers("/index").permitAll()
-			.antMatchers("/tickets/my-tickets/**").hasAnyAuthority(AuthorityEnum.DEVELOPER.toString(), AuthorityEnum.PROJECTMANAGER.toString(), AuthorityEnum.ADMINISTRATOR.toString())
-			.antMatchers("/tickets/project-tickets/**").hasAnyAuthority(AuthorityEnum.DEVELOPER.toString(), AuthorityEnum.PROJECTMANAGER.toString(), AuthorityEnum.ADMINISTRATOR.toString())
+			.antMatchers("/tickets/view-tickets/**").authenticated()
+			.antMatchers("/tickets/modify-ticket/**").hasAnyAuthority(AuthorityEnum.DEVELOPER.toString(), AuthorityEnum.PROJECTMANAGER.toString(), AuthorityEnum.ADMINISTRATOR.toString())
 			.antMatchers("/tickets/delete-ticket/**").hasAnyAuthority(AuthorityEnum.PROJECTMANAGER.toString(), AuthorityEnum.ADMINISTRATOR.toString())
 			.and()
 			.formLogin()

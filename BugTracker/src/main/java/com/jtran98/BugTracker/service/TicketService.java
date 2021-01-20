@@ -35,14 +35,7 @@ public class TicketService{
 	 * Get a ticket based on its id
 	 */
 	public Ticket getTicketByTicketId(long id) {
-		Optional<Ticket> optional = ticketRepository.findById(id);
-		Ticket ticket = null;
-		if(optional.isPresent()) {
-			ticket = optional.get();
-		} else {
-			throw new RuntimeException("Ticket not Found for id: "+id);
-		}
-		return ticket;
+		return ticketRepository.findByTicketId(id);
 	}
 	
 	/**
@@ -64,6 +57,10 @@ public class TicketService{
 	 */
 	public List<Ticket> getTicketsOfProject(long id){
 		return ticketRepository.findByProjectSource_ProjectId(id);
+	}
+	
+	public List<Ticket> getTicketsUserSubmitted(Long userId) {
+		return ticketRepository.findBySubmitter_UserId(userId);
 	}
 	
 }

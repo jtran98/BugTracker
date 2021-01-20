@@ -26,7 +26,7 @@
 	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Project</a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/project/project-tickets">Tickets</a>
+			<a class="dropdown-item" href = "/tickets/project-tickets">Tickets</a>
             <a class="dropdown-item" href= "/project/project-members" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')">Members</a>
         </div>
 	</li>
@@ -43,6 +43,7 @@
 			<a class="dropdown-item" href= "/management/create-user">Create User</a>
             <a class="dropdown-item" href= "/management/manage-users">Manage Users</a>
             <a class="dropdown-item" href= "/management/manage-tickets">Manage Tickets</a>
+            <a class="dropdown-item" href= "/management/manage-projects">Manage Projects</a>
         </div>
 	</li>
     </ul>

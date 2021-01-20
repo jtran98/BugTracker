@@ -7,13 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.jtran98.BugTracker.exception.FileStorageException;
 import com.jtran98.BugTracker.model.Ticket;
+import com.jtran98.BugTracker.model.TicketFile;
 import com.jtran98.BugTracker.security.UserPrincipal;
 import com.jtran98.BugTracker.service.TicketService;
 
@@ -43,8 +48,21 @@ public class TicketController {
 	@GetMapping("/assigned-tickets")
 	public String getAssignedTicketsOfCurrentUser(Model model, Authentication auth) {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-		model.addAttribute("myTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
-		return "/ticket/assigned-tickets";
+		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
+		model.addAttribute("viewAssignedTickets", true);
+		return "/ticket/view-tickets";
+	}
+	/**
+	 * Gets all tickets the currently authenticated user submitted
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/submitted-tickets")
+	public String getSubmittedTicketsOfCurrentUser(Model model, Authentication auth) {
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
+		model.addAttribute("viewSubmittedTickets", true);
+		return "/ticket/view-tickets";
 	}
 	
 	/**
@@ -55,19 +73,15 @@ public class TicketController {
 	@GetMapping("/project-tickets")
 	public String getTicketsByProjectId(Model model, Authentication auth) {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-		model.addAttribute("projectTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));
-		return "/ticket/project-tickets";
+		model.addAttribute("viewTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));
+		model.addAttribute("viewProjectTickets", true);
+		return "/ticket/view-tickets";
 	}
 	
-	@GetMapping("/submit-new-ticket")
-	public String createNewTicketForm(Model model) {
-		Ticket ticket = new Ticket();
-		model.addAttribute("newTicket", ticket);
-		return "/ticket/new-ticket";
-	}
+	
 	
 	@PostMapping("/save-ticket")
-	public String makeNewTicket(@ModelAttribute("newTicket") Ticket ticket, Model model, Authentication auth) {
+	public String makeNewTicket(@ModelAttribute("newTicket") Ticket ticket,  Model model, Authentication auth) {
 		if(ticket.getCreationDate() == null) {
 			ticket.setCreationDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 			ticket.setMostRecentUpdateDate("N/A");
@@ -79,14 +93,23 @@ public class TicketController {
 		ticket.setProjectSource(userPrincipal.getProjectTeam());
 		ticket.setSubmitter(userPrincipal.getUser());
 		ticketService.saveTicket(ticket);
-		return "redirect:/tickets/assigned-tickets";
+		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
+		model.addAttribute("viewSubmittedTickets", true);
+		return "/ticket/view-tickets";
+	}
+	
+	@GetMapping("/submit-new-ticket")
+	public String createNewTicketForm(Model model) {
+		Ticket ticket = new Ticket();
+		model.addAttribute("modifyTicket", ticket);
+		return "/ticket/modify-ticket";
 	}
 	
 	@GetMapping("/update-ticket/{id}")
 	public String updateTicket(@PathVariable (value = "id") long id, Model model) {
 		Ticket ticket = ticketService.getTicketByTicketId(id);
-		model.addAttribute("updateTicket", ticket);
-		return "/ticket/update-ticket";
+		model.addAttribute("modifyTicket", ticket);
+		return "/ticket/modify-ticket";
 	}
 	
 	@GetMapping("/delete-ticket/{id}")
@@ -94,4 +117,6 @@ public class TicketController {
 		ticketService.deleteTicketByTicketId(id);
 		return "redirect:/index";
 	}
+	
+	
 }

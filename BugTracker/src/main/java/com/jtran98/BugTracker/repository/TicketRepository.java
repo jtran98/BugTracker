@@ -22,4 +22,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>{
 	 * @return 
 	 */
 	public List<Ticket> findByProjectSource_ProjectId(Long projectId);
+	/**
+	 * Finds ticket by ticket id
+	 * @param ticketId - ticket id
+	 * @return
+	 */
+	public Ticket findByTicketId(Long ticketId);
+	public List<Ticket> findBySubmitter_UserId(Long userId);
 }
