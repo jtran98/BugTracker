@@ -157,7 +157,6 @@ public class TicketController {
 	@GetMapping("/view-details/{id}")
 	public String viewTicketDetails(@PathVariable (value = "id") long id, Model model) {
 		Ticket ticket = ticketService.getTicketByTicketId(id);
-		System.out.println(ticket.getTitle());
 		model.addAttribute("ticketDetails", ticket);
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
 		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
@@ -182,7 +181,46 @@ public class TicketController {
 		commentEntryService.saveComment(comment);
 		
 		Ticket ticket = ticketService.getTicketByTicketId(id);
-		System.out.println(ticket.getTitle());
+		model.addAttribute("ticketDetails", ticket);
+		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
+		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		CommentEntry nextComment = new CommentEntry();
+		model.addAttribute("comment", nextComment);
+		return "ticket/ticket-details";
+	}
+	/**
+	 * Unassigns a ticket from the logged in user
+	 * @param id - id of ticket
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/drop-ticket/{id}")
+	public String assignTicketToUser(@PathVariable (value = "id") long id, Model model) {
+		Ticket ticket = ticketService.getTicketByTicketId(id);
+		ticket.setAssignedUser(null);
+		ticketService.saveTicket(ticket);
+		
+		model.addAttribute("ticketDetails", ticket);
+		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
+		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		CommentEntry nextComment = new CommentEntry();
+		model.addAttribute("comment", nextComment);
+		return "ticket/ticket-details";
+	}
+	/**
+	 * Assigns a ticket to the logged in user
+	 * @param id - id of ticket
+	 * @param model
+	 * @param auth
+	 * @return
+	 */
+	@GetMapping("/take-ticket/{id}")
+	public String dropTicketOfUser(@PathVariable (value = "id") long id, Model model, Authentication auth) {
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		Ticket ticket = ticketService.getTicketByTicketId(id);
+		ticket.setAssignedUser(userPrincipal.getUser());
+		ticketService.saveTicket(ticket);
+		
 		model.addAttribute("ticketDetails", ticket);
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
 		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));

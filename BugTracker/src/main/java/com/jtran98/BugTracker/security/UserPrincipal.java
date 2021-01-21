@@ -42,6 +42,9 @@ public class UserPrincipal implements UserDetails{
 	public Project getProjectTeam() {
 		return user.getProjectTeam();
 	}
+	public AuthorityEnum getRole() {
+		return user.getRole();
+	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		ArrayList<GrantedAuthority> authorities = new ArrayList<>();
