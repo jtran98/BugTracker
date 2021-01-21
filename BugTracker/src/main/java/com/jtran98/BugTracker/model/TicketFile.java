@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 /**
  * File (if uploaded) tied to a specific ticket. Each ticket can only have 1 ticket file
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 @Entity

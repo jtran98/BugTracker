@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 /**
  * Comment entry POJO. Linked to a ticket, and the user who made the change.
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 @Entity

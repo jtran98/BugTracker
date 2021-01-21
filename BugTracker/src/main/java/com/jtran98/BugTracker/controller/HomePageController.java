@@ -10,7 +10,7 @@ import com.jtran98.BugTracker.security.UserPrincipalDetailsService;
 
 /**
  * Controller for misc mappings like index and login
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 @Controller

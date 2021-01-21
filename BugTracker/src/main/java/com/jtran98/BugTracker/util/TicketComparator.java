@@ -9,7 +9,7 @@ import com.jtran98.BugTracker.model.Ticket;
 /**
  * Simple comparator util for Ticket classes. Sorts By priority, then type (if the priority level is the same), and then finally status.
  * Note: Do not modify the enums compared, otherwise the sorts will break.
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 @Service

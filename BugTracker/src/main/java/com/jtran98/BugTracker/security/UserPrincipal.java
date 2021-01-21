@@ -14,7 +14,7 @@ import com.jtran98.BugTracker.model.User;
 
 /**
  * Wrapper object that enables Spring security
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 public class UserPrincipal implements UserDetails{

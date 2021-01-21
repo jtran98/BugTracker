@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 /**
  * Comment Entry POJO. Has IDs linking to the ticket it belongs to, the user who made the comment, and other expected values like description and date created
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 @Entity

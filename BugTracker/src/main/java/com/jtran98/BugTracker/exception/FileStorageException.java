@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /**
  * Custom exception for when file upload/download fails
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 public class FileStorageException extends Exception {

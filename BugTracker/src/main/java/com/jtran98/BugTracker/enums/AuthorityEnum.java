@@ -2,7 +2,7 @@ package com.jtran98.BugTracker.enums;
 
 /**
  * Role model, contains the different employee roles (authorities)
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 public enum AuthorityEnum {

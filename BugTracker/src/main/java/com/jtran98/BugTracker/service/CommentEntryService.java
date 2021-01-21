@@ -7,7 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.jtran98.BugTracker.model.CommentEntry;
 import com.jtran98.BugTracker.repository.CommentEntryRepository;
-
+/**
+ * Service to handle CommentEntry repository
+ * @author Jacky Tran
+ *
+ */
 @Service
 public class CommentEntryService {
 	@Autowired

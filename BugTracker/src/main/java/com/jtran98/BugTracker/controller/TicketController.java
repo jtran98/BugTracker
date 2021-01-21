@@ -31,7 +31,7 @@ import com.jtran98.BugTracker.util.TicketComparator;
 
 /**
  * Controller for all mappings relating to tickets
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 @Controller

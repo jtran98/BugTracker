@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 /**
  * Project model, contains a name, id and list of members
- * @author Jacky
+ * @author Jacky Tran
  *
  */
 @Entity
