@@ -48,7 +48,7 @@ public class BugTrackerSecurityConfiguration extends WebSecurityConfigurerAdapte
 			.and()
 			.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/index")
 			.and()
-			.rememberMe().tokenValiditySeconds(2592000).rememberMeParameter("rememberMe");
+			.rememberMe().tokenValiditySeconds(2592000).rememberMeParameter("rememberMe").userDetailsService(userPrincipalDetailsService);
 	}
 	
 	@Bean
