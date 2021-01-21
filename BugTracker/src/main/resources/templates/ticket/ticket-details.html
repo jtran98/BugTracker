@@ -56,7 +56,8 @@
 <dl class="row" style="max-width: 900px">
   <dt class="col-sm-3">Title</dt>
   <dd class="col-sm-9" th:text="${ticketDetails.title}"></dd>
-  <dt class="col-sm-3" th:if="${ticketDetails.assignedUser != null}">Assigned to</dt>
+  <dt class="col-sm-3" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId == #authentication.principal.userId}">Assigned to You!</dt>
+  <dt class="col-sm-3" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId != #authentication.principal.userId}">Assigned to</dt>
   <dt class="col-sm-3" th:if="${ticketDetails.assignedUser == null}">No one assigned</dt>
   <dd class="col-sm-9" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId != #authentication.principal.userId}" th:text="${ticketDetails.assignedUser?.firstName + ' ' + ticketDetails.assignedUser?.lastName}"></dd>
   <dd class="col-sm-9" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId == #authentication.principal.userId}"><form th:action="@{/tickets/drop-ticket/{id}(id=${ticketDetails.ticketId})}"><button type="submit" class="btn btn-danger">Drop Ticket</button></form></dd>
@@ -79,8 +80,8 @@
   <dd class="col-sm-9" th:text="${ticketDetails.mostRecentUpdateDate}"></dd>
 </dl>
 
-<a th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a><br>
-<a th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">View File</a><br><br>
+<a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a><br>
+<a th:if="${#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/view-file/{id}(id=${ticketDetails.ticketId})}">View File</a><br><br>
 
 	<h3>Comments</h3>
 	<table th:unless="${#lists.isEmpty(commentEntries)}" class="table table-bordered table-hover">

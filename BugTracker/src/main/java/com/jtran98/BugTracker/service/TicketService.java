@@ -23,14 +23,12 @@ public class TicketService{
 	public List<Ticket> getAllTickets(){
 		return ticketRepository.findAll();
 	}
-	
 	/**
 	 * Saves a ticket to the repository
 	 */
 	public void saveTicket(Ticket ticket) {
 		this.ticketRepository.save(ticket);
 	}
-	
 	/**
 	 * Get a ticket based on its id
 	 */
@@ -58,7 +56,11 @@ public class TicketService{
 	public List<Ticket> getTicketsOfProject(long id){
 		return ticketRepository.findByProjectSource_ProjectId(id);
 	}
-	
+	/**
+	 * Gets all tickets the user submitted
+	 * @param userId - id of user
+	 * @return
+	 */
 	public List<Ticket> getTicketsUserSubmitted(Long userId) {
 		return ticketRepository.findBySubmitter_UserId(userId);
 	}

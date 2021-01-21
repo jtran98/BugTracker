@@ -150,12 +150,13 @@ public class TicketController {
 		return "/ticket/modify-ticket";
 	}
 	/**
-	 * Deletes ticket
+	 * Deletes ticket and all accompanying comments
 	 * @param id - id of ticket
 	 * @return
 	 */
 	@GetMapping("/delete-ticket/{id}")
 	public String deleteTicket(@PathVariable (value = "id") long id, Model model, Authentication auth) {
+		commentEntryService.deleteAllCommentsOfTicket(id);
 		ticketService.deleteTicketByTicketId(id);
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));

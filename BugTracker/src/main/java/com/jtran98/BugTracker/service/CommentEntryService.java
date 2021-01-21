@@ -28,4 +28,11 @@ public class CommentEntryService {
 	public void saveComment(CommentEntry comment) {
 		this.commentEntryRepository.save(comment);
 	}
+	/**
+	 * Deletes all comments tied to a specific ticket
+	 * @param id - id of ticket
+	 */
+	public void deleteAllCommentsOfTicket(Long id) {
+		this.commentEntryRepository.deleteAllCommentsByTicketId(id);
+	}
 }
