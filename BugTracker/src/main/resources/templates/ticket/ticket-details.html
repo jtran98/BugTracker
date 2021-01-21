@@ -56,6 +56,8 @@
 <dl class="row" style="max-width: 900px">
   <dt class="col-sm-3">Title</dt>
   <dd class="col-sm-9" th:text="${ticketDetails.title}"></dd>
+  <dt class="col-sm-3">Description</dt>
+  <dd class="col-sm-9" th:text="${ticketDetails.description}"></dd>
   <dt class="col-sm-3" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId == #authentication.principal.userId}">Assigned to You!</dt>
   <dt class="col-sm-3" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId != #authentication.principal.userId}">Assigned to</dt>
   <dt class="col-sm-3" th:if="${ticketDetails.assignedUser == null}">No one assigned</dt>
@@ -64,8 +66,6 @@
   <dd class="col-sm-9" th:if="${ticketDetails.assignedUser == null}"><form th:action="@{/tickets/take-ticket/{id}(id=${ticketDetails.ticketId})}"><button type="submit" class="btn btn-success">Take ticket</button></form></dd>
   <dt class="col-sm-3">Submitter</dt>
   <dd class="col-sm-9" th:text="${ticketDetails.submitter?.firstName + ' ' + ticketDetails.submitter?.lastName}"></dd>
-  <dt class="col-sm-3">Description</dt>
-  <dd class="col-sm-9" th:text="${ticketDetails.description}"></dd>
   <dt class="col-sm-3">Submission Date</dt>
   <dd class="col-sm-9" th:text="${ticketDetails.creationDate}"></dd>
   <dt class="col-sm-3">Project</dt>

@@ -56,7 +56,7 @@
 	<br>
 	<div class="jumbotron jumbotron-fluid">
 	  <div class="container">
-	    <h1 th:if="${viewProjectTickets}" th:text="'Project ' + ${#authentication.principal.projectTeam?.projectName} +'\'s Tickets'"></h1>
+	    <h1 th:if="${viewProjectTickets}" th:text="'Project \'' + ${#authentication.principal.projectTeam?.projectName} +'\' Tickets'"></h1>
 		<h1 th:if="${viewSubmittedTickets}" th:text="${#authentication.principal.firstName} +'\'s Submitted Tickets'"></h1>
 		<h1 th:if="${viewAssignedTickets}" th:text="${#authentication.principal.firstName} +'\'s Assigned Tickets'"></h1>
 	  </div>

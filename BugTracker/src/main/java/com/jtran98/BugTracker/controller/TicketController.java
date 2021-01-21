@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jtran98.BugTracker.enums.StatusEnum;
 import com.jtran98.BugTracker.exception.FileStorageException;
 import com.jtran98.BugTracker.model.CommentEntry;
 import com.jtran98.BugTracker.model.Ticket;
@@ -115,6 +116,9 @@ public class TicketController {
 			ticket.setMostRecentUpdateDate("N/A");
 			ticket.setProjectSource(userPrincipal.getProjectTeam());
 			ticket.setSubmitter(userPrincipal.getUser());;
+			if(ticket.getStatus().toString().equalsIgnoreCase(StatusEnum.TAKEN.toString())) {
+				ticket.setAssignedUser(userPrincipal.getUser());
+			}
 		}
 		else {
 			ticket.setMostRecentUpdateDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
@@ -238,6 +242,7 @@ public class TicketController {
 		//Updates ticket
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		ticket.setAssignedUser(null);
+		ticket.setStatus(StatusEnum.OPEN);
 		ticketService.saveTicket(ticket);
 		//Makes log for change
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
@@ -265,6 +270,7 @@ public class TicketController {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		ticket.setAssignedUser(userPrincipal.getUser());
+		ticket.setStatus(StatusEnum.TAKEN);
 		ticketService.saveTicket(ticket);
 		//Makes log for change
 		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User", "No one", 
