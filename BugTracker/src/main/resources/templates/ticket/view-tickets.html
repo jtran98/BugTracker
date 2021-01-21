@@ -70,17 +70,17 @@
 	      <th scope="col">Priority</th>
 	      <th scope="col">Title</th>
 	      <th scope="col">Description</th>
-	      <th scope="col">Submitter</th>
+	      <th scope="col">Type</th>
 	      <th scope="col">Status</th>
 	      <th scope="col" colspan="2" align="center">Actions</th>
 	    </tr>
 	  </thead>
 	  <tbody>
-	    <tr th:each="ticket : ${viewTickets}">
+	    <tr th:each="ticket : ${#lists.sort(viewTickets, ticketComparator)}">
 	      <td th:text="${ticket.priority}" scope="row"></td>
 	      <td th:text="${ticket.title}" scope="row"></td>
 	      <td th:text="${ticket.description}" scope="row"></td>
-	      <td th:text="${ticket.submitter?.firstName + ' ' + ticket.submitter?.lastName}" scope="row"></td>
+	      <td th:text="${ticket.type}" scope="row"></td>
 	      <td th:text="${ticket.status}" scope="row"></td>
 	      <td><a th:href="@{/tickets/view-details/{id}(id=${ticket.ticketId})}">Details</a></td>
 	    </tr>

@@ -24,6 +24,7 @@ import com.jtran98.BugTracker.security.UserPrincipal;
 import com.jtran98.BugTracker.service.CommentEntryService;
 import com.jtran98.BugTracker.service.LogEntryService;
 import com.jtran98.BugTracker.service.TicketService;
+import com.jtran98.BugTracker.util.TicketComparator;
 
 /**
  * Controller for all mappings relating to tickets
@@ -40,6 +41,8 @@ public class TicketController {
 	private LogEntryService logEntryService;
 	@Autowired
 	private CommentEntryService commentEntryService;
+	@Autowired
+	private TicketComparator ticketComparator;
 	
 	/**
 	 * Gets all tickets
@@ -62,6 +65,7 @@ public class TicketController {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
 		model.addAttribute("viewAssignedTickets", true);
+		model.addAttribute("ticketComparator", ticketComparator);
 		return "/ticket/view-tickets";
 	}
 	/**
@@ -74,6 +78,7 @@ public class TicketController {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
 		model.addAttribute("viewSubmittedTickets", true);
+		model.addAttribute("ticketComparator", ticketComparator);
 		return "/ticket/view-tickets";
 	}
 	
@@ -87,12 +92,13 @@ public class TicketController {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));
 		model.addAttribute("viewProjectTickets", true);
+		model.addAttribute("ticketComparator", ticketComparator);
 		return "/ticket/view-tickets";
 	}
 	
 	
 	/**
-	 * Saves ticket to the repository, date is changed based on whether the ticket is new or is an existing one being updated
+	 * Saves ticket to the repository
 	 * @param ticket - object taken from thymeleaf template
 	 * @param model
 	 * @param auth
@@ -100,7 +106,8 @@ public class TicketController {
 	 */
 	@PostMapping("/save-ticket")
 	public String makeNewTicket(Ticket ticket,  Model model, Authentication auth) {
-		if(ticket.getCreationDate() == null) {
+		//Date is changed based on whether the ticket is new or is an existing one being updated
+		if(ticket.getCreationDate() == null || ticket.getCreationDate().equals("")) {
 			ticket.setCreationDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 			ticket.setMostRecentUpdateDate("N/A");
 		}
@@ -108,11 +115,15 @@ public class TicketController {
 			ticket.setMostRecentUpdateDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 		}
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-		ticket.setProjectSource(userPrincipal.getProjectTeam());
-		ticket.setSubmitter(userPrincipal.getUser());
+		//If ticket is new, set submitter id and project id to the ones of the currently logged in user
+		if(ticket.getAssignedUser() == null) {
+			ticket.setProjectSource(userPrincipal.getProjectTeam());
+			ticket.setSubmitter(userPrincipal.getUser());
+		}
 		ticketService.saveTicket(ticket);
 		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
 		model.addAttribute("viewSubmittedTickets", true);
+		model.addAttribute("ticketComparator", ticketComparator);
 		return "/ticket/view-tickets";
 	}
 	/**
@@ -144,9 +155,13 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/delete-ticket/{id}")
-	public String deleteTicket(@PathVariable (value = "id") long id) {
+	public String deleteTicket(@PathVariable (value = "id") long id, Model model, Authentication auth) {
 		ticketService.deleteTicketByTicketId(id);
-		return "redirect:/index";
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
+		model.addAttribute("viewAssignedTickets", true);
+		model.addAttribute("ticketComparator", ticketComparator);
+		return "/ticket/view-tickets";
 	}
 	/**
 	 * Views a ticket in more detail
