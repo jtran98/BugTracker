@@ -19,7 +19,7 @@ import com.jtran98.BugTracker.enums.StatusEnum;
 import com.jtran98.BugTracker.enums.TypeEnum;
 
 /**
- * Ticket model, contains a name, description, list of developers working on ticket, a submitter, a project the ticket belongs to, and a priority level
+ * Ticket model, contains a variety of properties, and is tied to many other entities. Refer to the ERD for more details
  * @author Jacky
  *
  */

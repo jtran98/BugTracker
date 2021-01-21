@@ -12,6 +12,11 @@ import com.jtran98.BugTracker.enums.AuthorityEnum;
 import com.jtran98.BugTracker.model.Project;
 import com.jtran98.BugTracker.model.User;
 
+/**
+ * Wrapper object that enables Spring security
+ * @author Jacky
+ *
+ */
 public class UserPrincipal implements UserDetails{
 	
 	private User user;

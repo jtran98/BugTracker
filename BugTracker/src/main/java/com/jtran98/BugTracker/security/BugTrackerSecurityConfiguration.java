@@ -26,6 +26,9 @@ public class BugTrackerSecurityConfiguration extends WebSecurityConfigurerAdapte
 		auth.authenticationProvider(getAuthenticationProvider());
 	}
 	
+	/**
+	 * Configurations for user security
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http

@@ -25,6 +25,11 @@ import com.jtran98.BugTracker.service.CommentEntryService;
 import com.jtran98.BugTracker.service.LogEntryService;
 import com.jtran98.BugTracker.service.TicketService;
 
+/**
+ * Controller for all mappings relating to tickets
+ * @author Jacky
+ *
+ */
 @Controller
 @RequestMapping("/tickets")
 public class TicketController {
@@ -86,7 +91,13 @@ public class TicketController {
 	}
 	
 	
-	
+	/**
+	 * Saves ticket to the repository, date is changed based on whether the ticket is new or is an existing one being updated
+	 * @param ticket - object taken from thymeleaf template
+	 * @param model
+	 * @param auth
+	 * @return
+	 */
 	@PostMapping("/save-ticket")
 	public String makeNewTicket(Ticket ticket,  Model model, Authentication auth) {
 		if(ticket.getCreationDate() == null) {
@@ -104,27 +115,45 @@ public class TicketController {
 		model.addAttribute("viewSubmittedTickets", true);
 		return "/ticket/view-tickets";
 	}
-	
+	/**
+	 * Takes user to ticket modification page
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/submit-new-ticket")
 	public String createNewTicketForm(Model model) {
 		Ticket ticket = new Ticket();
 		model.addAttribute("modifyTicket", ticket);
 		return "/ticket/modify-ticket";
 	}
-	
+	/**
+	 * Takes user to ticket modification page, with the ticket's existing values prefilled
+	 * @param id - id of ticket
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/update-ticket/{id}")
 	public String updateTicket(@PathVariable (value = "id") long id, Model model) {
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		model.addAttribute("modifyTicket", ticket);
 		return "/ticket/modify-ticket";
 	}
-	
+	/**
+	 * Deletes ticket
+	 * @param id - id of ticket
+	 * @return
+	 */
 	@GetMapping("/delete-ticket/{id}")
 	public String deleteTicket(@PathVariable (value = "id") long id) {
 		ticketService.deleteTicketByTicketId(id);
 		return "redirect:/index";
 	}
-	
+	/**
+	 * Views a ticket in more detail
+	 * @param id - id of ticket
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/view-details/{id}")
 	public String viewTicketDetails(@PathVariable (value = "id") long id, Model model) {
 		Ticket ticket = ticketService.getTicketByTicketId(id);
@@ -136,7 +165,14 @@ public class TicketController {
 		model.addAttribute("comment", comment);
 		return "/ticket/ticket-details";
 	}
-	
+	/**
+	 * Creates a comment on a ticket's detail page
+	 * @param id - id of ticket
+	 * @param model
+	 * @param auth
+	 * @param comment - comment text
+	 * @return
+	 */
 	@PostMapping("/make-comment/{id}")
 	public String createComment(@PathVariable (value = "id") long id, Model model, Authentication auth, CommentEntry comment) {
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();

@@ -13,6 +13,11 @@ public class LogEntryService {
 	@Autowired
 	private LogEntryRepository logEntryRepository;
 	
+	/**
+	 * Gets all logs of a given ticket
+	 * @param id - id of ticket
+	 * @return
+	 */
 	public List<LogEntry> getLogsOfTicket(Long id){
 		return logEntryRepository.findByLogOrigin_TicketId(id);
 	}

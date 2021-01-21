@@ -15,6 +15,11 @@ import javax.persistence.Table;
 
 import com.jtran98.BugTracker.enums.AuthorityEnum;
 
+/**
+ * User object. Holds user's login credentials as well as information such as the project team they belong to, and tickets they're working on/have submitted
+ * @author Jacky
+ *
+ */
 @Entity
 @Table(name = "Users")
 public class User {

@@ -2,6 +2,11 @@ package com.jtran98.BugTracker.exception;
 
 import java.io.IOException;
 
+/**
+ * Custom exception for when file upload/download fails
+ * @author Jacky
+ *
+ */
 public class FileStorageException extends Exception {
 	public FileStorageException(String error) {
 		super(error);

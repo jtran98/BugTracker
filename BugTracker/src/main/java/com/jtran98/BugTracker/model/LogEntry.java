@@ -8,7 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
+/**
+ * Comment entry POJO. Linked to a ticket, and the user who made the change.
+ * @author Jacky
+ *
+ */
 @Entity
 @Table(name = "Log_Entries")
 public class LogEntry {

@@ -52,8 +52,10 @@
 
 	<br><br>
 	<div align="center" style="max-width: ">
-	<h3>Ticket Details</h3>
+	<h3 >Ticket Details</h3><br>
 <dl class="row" style="max-width: 900px">
+  <dt class="col-sm-3">Title</dt>
+  <dd class="col-sm-9" th:text="${ticketDetails.description}"></dd>
   <dt class="col-sm-3">Submitter</dt>
   <dd class="col-sm-9" th:text="${ticketDetails.submitter?.firstName + ' ' + ticketDetails.submitter?.lastName}"></dd>
   <dt class="col-sm-3">Description</dt>

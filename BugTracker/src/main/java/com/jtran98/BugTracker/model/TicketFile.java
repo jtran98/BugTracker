@@ -10,7 +10,11 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-
+/**
+ * File (if uploaded) tied to a specific ticket. Each ticket can only have 1 ticket file
+ * @author Jacky
+ *
+ */
 @Entity
 @Table(name = "Ticket_Files")
 public class TicketFile {
