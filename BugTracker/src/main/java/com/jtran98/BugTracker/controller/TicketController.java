@@ -20,6 +20,8 @@ import com.jtran98.BugTracker.exception.FileStorageException;
 import com.jtran98.BugTracker.model.CommentEntry;
 import com.jtran98.BugTracker.model.Ticket;
 import com.jtran98.BugTracker.model.TicketFile;
+import com.jtran98.BugTracker.model.User;
+import com.jtran98.BugTracker.repository.TicketRepository;
 import com.jtran98.BugTracker.security.UserPrincipal;
 import com.jtran98.BugTracker.service.CommentEntryService;
 import com.jtran98.BugTracker.service.LogEntryService;
@@ -98,27 +100,48 @@ public class TicketController {
 	
 	
 	/**
-	 * Saves ticket to the repository
+	 * Saves ticket to the repository. Changes function depending on if the ticket was new, or already existed and is just being modified
 	 * @param ticket - object taken from thymeleaf template
 	 * @param model
 	 * @param auth
 	 * @return
 	 */
 	@PostMapping("/save-ticket")
-	public String makeNewTicket(Ticket ticket,  Model model, Authentication auth) {
-		//Date is changed based on whether the ticket is new or is an existing one being updated
+	public String makeNewTicket(@ModelAttribute("modifyTicket") Ticket ticket,  Model model, Authentication auth) {
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		//If ticket is new, set the creation date, submitter id, and project source as the submitter's current project. Otherwise, log the changes made to the ticket
 		if(ticket.getCreationDate() == null || ticket.getCreationDate().equals("")) {
 			ticket.setCreationDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 			ticket.setMostRecentUpdateDate("N/A");
+			ticket.setProjectSource(userPrincipal.getProjectTeam());
+			ticket.setSubmitter(userPrincipal.getUser());;
 		}
 		else {
 			ticket.setMostRecentUpdateDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
-		}
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-		//If ticket is new, set submitter id and project id to the ones of the currently logged in user
-		if(ticket.getAssignedUser() == null) {
-			ticket.setProjectSource(userPrincipal.getProjectTeam());
-			ticket.setSubmitter(userPrincipal.getUser());
+			Ticket oldTicket = ticketService.getTicketByTicketId(ticket.getTicketId());
+			/**
+			 * This is disgusting but I can't think of any other way to check 5 values at once to make 5 different entries
+			 */
+			if(!oldTicket.getTitle().equals(ticket.getTitle())) {
+				logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Title", oldTicket.getTitle(),
+						ticket.getTitle(), java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+			}
+			if(!oldTicket.getDescription().equals(ticket.getDescription())) {
+				logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Description", oldTicket.getDescription(),
+						ticket.getDescription(), java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+			}
+			if(!oldTicket.getType().toString().equals(ticket.getType().toString())) {
+				logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Type", oldTicket.getType().toString(),
+						ticket.getType().toString(), java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+			}
+			if(!oldTicket.getPriority().toString().equals(ticket.getPriority().toString())) {
+				logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Priority", oldTicket.getPriority().toString(),
+						ticket.getPriority().toString(), java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+			}
+			if(!oldTicket.getStatus().toString().equals(ticket.getStatus().toString())) {
+				logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Status", oldTicket.getStatus().toString(),
+						ticket.getStatus().toString(), java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+			}
 		}
 		ticketService.saveTicket(ticket);
 		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
@@ -211,11 +234,17 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/drop-ticket/{id}")
-	public String assignTicketToUser(@PathVariable (value = "id") long id, Model model) {
+	public String assignTicketToUser(@PathVariable (value = "id") long id, Model model, Authentication auth) {
+		//Updates ticket
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		ticket.setAssignedUser(null);
 		ticketService.saveTicket(ticket);
-		
+		//Makes log for change
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User",
+				userPrincipal.getUser().getFirstName()+" "+userPrincipal.getUser().getLastName(),
+				"No one", java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+		//Passes values to reload the page
 		model.addAttribute("ticketDetails", ticket);
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
 		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
@@ -232,11 +261,16 @@ public class TicketController {
 	 */
 	@GetMapping("/take-ticket/{id}")
 	public String dropTicketOfUser(@PathVariable (value = "id") long id, Model model, Authentication auth) {
+		//Updates ticket
 		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		ticket.setAssignedUser(userPrincipal.getUser());
 		ticketService.saveTicket(ticket);
-		
+		//Makes log for change
+		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User", "No one", 
+				userPrincipal.getUser().getFirstName()+" "+userPrincipal.getUser().getLastName(),
+				java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+		//Passes values to reload the page
 		model.addAttribute("ticketDetails", ticket);
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
 		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));

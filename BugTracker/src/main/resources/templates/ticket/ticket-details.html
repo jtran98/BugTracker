@@ -81,29 +81,55 @@
 </dl>
 
 <a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a><br>
-<a th:if="${#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/view-file/{id}(id=${ticketDetails.ticketId})}">View File</a><br><br>
+<a th:if="${#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/view-file/{id}(id=${ticketDetails.ticketId})}">View File</a>
 
-	<h3>Comments</h3>
-	<table th:unless="${#lists.isEmpty(commentEntries)}" class="table table-bordered table-hover">
-	  <thead>
-	    <tr>
-	      <th scope="col">User</th>
-	      <th scope="col">Comment</th>
-	      <th scope="col">Date</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	    <tr th:each="comment : ${commentEntries}" th:unless="${#lists.isEmpty(commentEntries)}">
-	      <td th:text="${comment.commenter?.firstName + ' ' + comment.commenter?.lastName}" scope="row"></td>
-	      <td th:text="${comment.description}" scope="row"></td>
-	      <td th:text="${comment.date}" scope="row"></td>
-	    </tr>
-	  </tbody>
-	</table>
+<br><br>
+
+<h3>Ticket Changes</h3>
+<table th:unless="${#lists.isEmpty(logEntries)}" class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Updater</th>
+      <th scope="col">Property changed</th>
+      <th scope="col">Old Value</th>
+      <th scope="col">New Value</th>
+      <th scope="col">Date change was made</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="log : ${logEntries}" th:unless="${#lists.isEmpty(logEntries)}">
+      <td th:text="${log.updater?.firstName + ' ' + log.updater?.lastName}" scope="row"></td>
+      <td th:text="${log.property}" scope="row"></td>
+      <td th:text="${log.oldValue}" scope="row"></td>
+      <td th:text="${log.newValue}" scope="row"></td>
+      <td th:text="${log.date}" scope="row"></td>
+    </tr>
+  </tbody>
+</table>
+
+<br><br>
+
+<h3>Comments</h3>
+<table th:unless="${#lists.isEmpty(commentEntries)}" class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th scope="col">User</th>
+      <th scope="col">Comment</th>
+      <th scope="col">Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="comment : ${commentEntries}" th:unless="${#lists.isEmpty(commentEntries)}">
+      <td th:text="${comment.commenter?.firstName + ' ' + comment.commenter?.lastName}" scope="row"></td>
+      <td th:text="${comment.description}" scope="row"></td>
+      <td th:text="${comment.date}" scope="row"></td>
+    </tr>
+  </tbody>
+</table>
 
 <form th:action="@{/tickets/make-comment/{id}(id=${ticketDetails.ticketId})}" th:object = "${comment}" method="POST" style="max-width: 650px;">
 	<input class="form-control" type="text" th:field = "*{description}" placeholder="Write something">
-	<br><button type="submit" class="btn btn-primary">Leave comment</button>
+	<br><button type="submit" class="btn btn-primary" style="margin-bottom: 200px;">Leave comment</button>
 </form>
 
 </div>
