@@ -54,9 +54,14 @@
 
 <div align="center">
 	<br>
-	<h1 th:if="${viewProjectTickets}" th:text="'Project ' + ${#authentication.principal.projectTeam?.projectName} +'\'s Tickets'"></h1>
-	<h1 th:if="${viewSubmittedTickets}" th:text="${#authentication.principal.firstName} +'\'s Submitted Tickets'"></h1>
-	<h1 th:if="${viewAssignedTickets}" th:text="${#authentication.principal.firstName} +'\'s Assigned Tickets'"></h1>
+	<div class="jumbotron jumbotron-fluid">
+	  <div class="container">
+	    <h1 th:if="${viewProjectTickets}" th:text="'Project ' + ${#authentication.principal.projectTeam?.projectName} +'\'s Tickets'"></h1>
+		<h1 th:if="${viewSubmittedTickets}" th:text="${#authentication.principal.firstName} +'\'s Submitted Tickets'"></h1>
+		<h1 th:if="${viewAssignedTickets}" th:text="${#authentication.principal.firstName} +'\'s Assigned Tickets'"></h1>
+	  </div>
+	</div>
+	
 	<a th:href = "@{/tickets/submit-new-ticket}">Submit Ticket</a>
 	<br><br>
 	<table class="table table-bordered table-hover">
@@ -65,7 +70,6 @@
 	      <th scope="col">Priority</th>
 	      <th scope="col">Title</th>
 	      <th scope="col">Description</th>
-	      <th scope="col">Type</th>
 	      <th scope="col">Submitter</th>
 	      <th scope="col">Status</th>
 	      <th scope="col" colspan="2" align="center">Actions</th>
@@ -76,11 +80,9 @@
 	      <td th:text="${ticket.priority}" scope="row"></td>
 	      <td th:text="${ticket.title}" scope="row"></td>
 	      <td th:text="${ticket.description}" scope="row"></td>
-	      <td th:text="${ticket.type}" scope="row"></td>
-	      <td th:text="${ticket.submitter?.firstName} + ' ' + ${ticket.submitter?.lastName}" scope="row"></td>
+	      <td th:text="${ticket.submitter?.firstName + ' ' + ticket.submitter?.lastName}" scope="row"></td>
 	      <td th:text="${ticket.status}" scope="row"></td>
 	      <td><a th:href="@{/tickets/view-details/{id}(id=${ticket.ticketId})}">Details</a></td>
-	      <td><a th:href="@{/tickets/update-ticket/{id}(id=${ticket.ticketId})}">Update</a></td>
 	    </tr>
 	  </tbody>
 	</table>

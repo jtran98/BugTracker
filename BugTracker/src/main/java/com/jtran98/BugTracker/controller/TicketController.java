@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jtran98.BugTracker.exception.FileStorageException;
+import com.jtran98.BugTracker.model.CommentEntry;
 import com.jtran98.BugTracker.model.Ticket;
 import com.jtran98.BugTracker.model.TicketFile;
 import com.jtran98.BugTracker.security.UserPrincipal;
+import com.jtran98.BugTracker.service.CommentEntryService;
+import com.jtran98.BugTracker.service.LogEntryService;
 import com.jtran98.BugTracker.service.TicketService;
 
 @Controller
@@ -28,6 +31,10 @@ public class TicketController {
 	
 	@Autowired
 	private TicketService ticketService;
+	@Autowired
+	private LogEntryService logEntryService;
+	@Autowired
+	private CommentEntryService commentEntryService;
 	
 	/**
 	 * Gets all tickets
@@ -36,8 +43,8 @@ public class TicketController {
 	 */
 	@GetMapping("/all")
 	public String viewHomePage(Model model) {
-		model.addAttribute("listTickets", ticketService.getAllTickets());
-		return "/ticket/all-tickets";
+		model.addAttribute("viewTickets", ticketService.getAllTickets());
+		return "/ticket/view-tickets";
 	}
 	
 	/**
@@ -81,7 +88,7 @@ public class TicketController {
 	
 	
 	@PostMapping("/save-ticket")
-	public String makeNewTicket(@ModelAttribute("newTicket") Ticket ticket,  Model model, Authentication auth) {
+	public String makeNewTicket(Ticket ticket,  Model model, Authentication auth) {
 		if(ticket.getCreationDate() == null) {
 			ticket.setCreationDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 			ticket.setMostRecentUpdateDate("N/A");
@@ -118,5 +125,33 @@ public class TicketController {
 		return "redirect:/index";
 	}
 	
+	@GetMapping("/view-details/{id}")
+	public String viewTicketDetails(@PathVariable (value = "id") long id, Model model) {
+		Ticket ticket = ticketService.getTicketByTicketId(id);
+		System.out.println(ticket.getTitle());
+		model.addAttribute("ticketDetails", ticket);
+		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
+		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		CommentEntry comment = new CommentEntry();
+		model.addAttribute("comment", comment);
+		return "/ticket/ticket-details";
+	}
 	
+	@PostMapping("/make-comment/{id}")
+	public String createComment(@PathVariable (value = "id") long id, Model model, Authentication auth, CommentEntry comment) {
+		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		comment.setCommentOrigin(ticketService.getTicketByTicketId(id));
+		comment.setCommenter(userPrincipal.getUser());
+		comment.setDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+		commentEntryService.saveComment(comment);
+		
+		Ticket ticket = ticketService.getTicketByTicketId(id);
+		System.out.println(ticket.getTitle());
+		model.addAttribute("ticketDetails", ticket);
+		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
+		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		CommentEntry nextComment = new CommentEntry();
+		model.addAttribute("comment", nextComment);
+		return "ticket/ticket-details";
+	}
 }
