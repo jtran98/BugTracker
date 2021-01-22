@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.jtran98.BugTracker.model.Ticket;
 
 /**
- * Simple comparator util for Ticket classes. Sorts By priority, then type (if the priority level is the same), and then finally status.
+ * Simple comparator util for Ticket objects. Sorts By priority, then type (if the priority level is the same), and then finally status.
  * Note: Do not modify the enums compared, otherwise the sorts will break.
  * @author Jacky Tran
  *
