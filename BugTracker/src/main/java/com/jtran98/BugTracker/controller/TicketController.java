@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,13 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jtran98.BugTracker.enums.StatusEnum;
-import com.jtran98.BugTracker.exception.FileStorageException;
 import com.jtran98.BugTracker.model.CommentEntry;
 import com.jtran98.BugTracker.model.Ticket;
 import com.jtran98.BugTracker.model.TicketFile;
-import com.jtran98.BugTracker.model.User;
-import com.jtran98.BugTracker.repository.TicketFileRepository;
-import com.jtran98.BugTracker.repository.TicketRepository;
 import com.jtran98.BugTracker.security.UserPrincipal;
 import com.jtran98.BugTracker.service.CommentEntryService;
 import com.jtran98.BugTracker.service.LogEntryService;
@@ -293,6 +287,7 @@ public class TicketController {
         try {
             outputStream.write(byteArray, 0, byteArray.length);
         } finally {
+        	outputStream.flush();
             outputStream.close();
         }
         
