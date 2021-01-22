@@ -8,47 +8,8 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="/index">Bug Tracker</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-	<li class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/login}">Log in</a>
-			<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/user/settings}">Settings</a>
-            <a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/logout}">Log out</a>
-        </div>
-	</li>
-	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Project</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/tickets/project-tickets">Tickets</a>
-            <a class="dropdown-item" href= "/project/project-members" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')">Members</a>
-        </div>
-	</li>
-	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tickets</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/tickets/assigned-tickets" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Assigned</a>
-            <a class="dropdown-item" href= "/tickets/submitted-tickets">Submitted</a>
-        </div>
-	</li>
-	<li class="nav-item dropdown" sec:authorize="hasAuthority('ADMINISTRATOR')">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href= "/management/create-user">Create User</a>
-            <a class="dropdown-item" href= "/management/manage-users">Manage Users</a>
-            <a class="dropdown-item" href= "/management/manage-tickets">Manage Tickets</a>
-			<a class="dropdown-item" href= "/management/manage-projects">Manage Projects</a>
-        </div>
-	</li>
-    </ul>
-  </div>
-</nav>
+<div th:replace="../static/fragments/navbar :: mynavbar"></div>
+
 	<div align="center">
 		<br>
 		<h2>Save Ticket</h2><br>

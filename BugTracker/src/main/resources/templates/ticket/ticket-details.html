@@ -8,47 +8,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="/index">Bug Tracker</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-	<li class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/login}">Log in</a>
-			<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/user/settings}">Settings</a>
-            <a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/logout}">Log out</a>
-        </div>
-	</li>
-	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Project</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/tickets/project-tickets">Tickets</a>
-            <a class="dropdown-item" href= "/project/project-members" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')">Members</a>
-        </div>
-	</li>
-	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tickets</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/tickets/assigned-tickets" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Assigned</a>
-            <a class="dropdown-item" href= "/tickets/submitted-tickets">Submitted</a>
-        </div>
-	</li>
-	<li class="nav-item dropdown" sec:authorize="hasAuthority('ADMINISTRATOR')">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href= "/management/create-user">Create User</a>
-            <a class="dropdown-item" href= "/management/manage-users">Manage Users</a>
-            <a class="dropdown-item" href= "/management/manage-tickets">Manage Tickets</a>
-            <a class="dropdown-item" href= "/management/manage-projects">Manage Projects</a>
-        </div>
-	</li>
-    </ul>
-  </div>
-</nav>
+<div th:replace="../static/fragments/navbar :: mynavbar"></div>
 
 	<br><br>
 	<div align="center" style="max-width: ">
@@ -80,10 +40,13 @@
   <dd class="col-sm-9" th:text="${ticketDetails.mostRecentUpdateDate}"></dd>
 </dl>
 
-<a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a>
 <br>
 
+<a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a>
 
+<br><br>
+
+<h3 th:unless="${#lists.isEmpty(ticketFiles)}">Files</h3>
 <table th:unless="${#lists.isEmpty(ticketFiles)}" class="table table-bordered table-hover">
   <thead>
     <tr>
@@ -99,10 +62,13 @@
   </tbody>
 </table>
 
-<form th:action="@{/tickets/upload-file/{id}(id=${ticketDetails.ticketId})}" enctype="multipart/form-data" method="POST" style="max-width: 650px;">
-	<input type="file" name="file">
-	<br><button th:if="${#authentication.principal.userId == ticketDetails.submitter?.userId}" type="submit" class="btn btn-primary" style="margin-bottom: 200px;">Upload File</button>
+<br>
+
+<div align="center" style="max-width: 400px;">
+<form th:action="@{/tickets/upload-file/{id}(id=${ticketDetails.ticketId})}" enctype="multipart/form-data" method="POST">
+	<input type="file" name="file" style="float: left;"><button th:if="${#authentication.principal.userId == ticketDetails.submitter?.userId}" type="submit" class="btn btn-primary" style="margin-bottom: 200px;">Upload File</button>
 </form>
+</div>
 
 <h3 th:unless="${#lists.isEmpty(logEntries)}">Ticket Changes</h3>
 <table th:unless="${#lists.isEmpty(logEntries)}" class="table table-bordered table-hover">
