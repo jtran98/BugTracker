@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -24,9 +25,13 @@ public class TicketFile {
 	@Column(name ="file_id", nullable = false)
 	private long fileId;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "ticket_id")
 	private Ticket fileOrigin;
+	
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User uploader;
 	
 	@Lob
 	@Column(length = 65535)
@@ -37,10 +42,12 @@ public class TicketFile {
 	
 	public TicketFile() {
 	}
-	public TicketFile(String name, String fileType, byte[] data) {
+	public TicketFile(String name, String fileType, byte[] data, Ticket fileOrigin, User uploader) {
 		this.name = name;
 		this.fileType = fileType;
 		this.data = data;
+		this.fileOrigin = fileOrigin;
+		this.uploader = uploader;
 	}
 	public long getFileId() {
 		return fileId;
@@ -53,6 +60,12 @@ public class TicketFile {
 	}
 	public void setFileOrigin(Ticket fileOrigin) {
 		this.fileOrigin = fileOrigin;
+	}
+	public User getUploader() {
+		return uploader;
+	}
+	public void setUploader(User uploader) {
+		this.uploader = uploader;
 	}
 	public String getName() {
 		return name;

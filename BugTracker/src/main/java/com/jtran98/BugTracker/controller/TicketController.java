@@ -1,12 +1,18 @@
 package com.jtran98.BugTracker.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,10 +28,12 @@ import com.jtran98.BugTracker.model.CommentEntry;
 import com.jtran98.BugTracker.model.Ticket;
 import com.jtran98.BugTracker.model.TicketFile;
 import com.jtran98.BugTracker.model.User;
+import com.jtran98.BugTracker.repository.TicketFileRepository;
 import com.jtran98.BugTracker.repository.TicketRepository;
 import com.jtran98.BugTracker.security.UserPrincipal;
 import com.jtran98.BugTracker.service.CommentEntryService;
 import com.jtran98.BugTracker.service.LogEntryService;
+import com.jtran98.BugTracker.service.TicketFileService;
 import com.jtran98.BugTracker.service.TicketService;
 import com.jtran98.BugTracker.util.TicketComparator;
 
@@ -45,7 +53,11 @@ public class TicketController {
 	@Autowired
 	private CommentEntryService commentEntryService;
 	@Autowired
+	private TicketFileService ticketFileService;
+	
+	@Autowired
 	private TicketComparator ticketComparator;
+	
 	
 	/**
 	 * Gets all tickets
@@ -64,8 +76,8 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/assigned-tickets")
-	public String getAssignedTicketsOfCurrentUser(Model model, Authentication auth) {
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+	public String getAssignedTicketsOfCurrentUser(Model model, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
 		model.addAttribute("viewAssignedTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
@@ -77,8 +89,8 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/submitted-tickets")
-	public String getSubmittedTicketsOfCurrentUser(Model model, Authentication auth) {
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+	public String getSubmittedTicketsOfCurrentUser(Model model, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
 		model.addAttribute("viewSubmittedTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
@@ -91,8 +103,8 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/project-tickets")
-	public String getTicketsByProjectId(Model model, Authentication auth) {
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+	public String getTicketsByProjectId(Model model, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));
 		model.addAttribute("viewProjectTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
@@ -104,12 +116,12 @@ public class TicketController {
 	 * Saves ticket to the repository. Changes function depending on if the ticket was new, or already existed and is just being modified
 	 * @param ticket - object taken from thymeleaf template
 	 * @param model
-	 * @param auth
+	 * @param authentication
 	 * @return
 	 */
 	@PostMapping("/save-ticket")
-	public String makeNewTicket(@ModelAttribute("modifyTicket") Ticket ticket,  Model model, Authentication auth) {
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+	public String makeNewTicket(@ModelAttribute("modifyTicket") Ticket ticket,  Model model, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		//If ticket is new, set the creation date, submitter id, and project source as the submitter's current project. Otherwise, log the changes made to the ticket
 		if(ticket.getCreationDate() == null || ticket.getCreationDate().equals("")) {
 			ticket.setCreationDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
@@ -145,6 +157,13 @@ public class TicketController {
 			if(!oldTicket.getStatus().toString().equals(ticket.getStatus().toString())) {
 				logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Status", oldTicket.getStatus().toString(),
 						ticket.getStatus().toString(), java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+				//If status gets changed to either TAKEN or OPEN, adjust assigned user accordingly
+				if(ticket.getStatus().equals(StatusEnum.TAKEN)){
+					ticket.setAssignedUser(userPrincipal.getUser());
+				}
+				else if(ticket.getStatus().equals(StatusEnum.OPEN)){
+					ticket.setAssignedUser(null);
+				}
 			}
 		}
 		ticketService.saveTicket(ticket);
@@ -182,10 +201,14 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/delete-ticket/{id}")
-	public String deleteTicket(@PathVariable (value = "id") long id, Model model, Authentication auth) {
+	public String deleteTicket(@PathVariable (value = "id") long id, Model model, Authentication authentication) {
+		//Deletes all foreign constraint entities first
 		commentEntryService.deleteAllCommentsOfTicket(id);
+		logEntryService.deleteAllLogsOfTicket(id);
+		ticketFileService.deleteAllFilesOfTicket(id);
 		ticketService.deleteTicketByTicketId(id);
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
 		model.addAttribute("viewAssignedTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
@@ -203,6 +226,7 @@ public class TicketController {
 		model.addAttribute("ticketDetails", ticket);
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
 		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
 		CommentEntry comment = new CommentEntry();
 		model.addAttribute("comment", comment);
 		return "/ticket/ticket-details";
@@ -211,26 +235,75 @@ public class TicketController {
 	 * Creates a comment on a ticket's detail page
 	 * @param id - id of ticket
 	 * @param model
-	 * @param auth
+	 * @param authentication
 	 * @param comment - comment text
 	 * @return
 	 */
 	@PostMapping("/make-comment/{id}")
-	public String createComment(@PathVariable (value = "id") long id, Model model, Authentication auth, CommentEntry comment) {
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+	public String createComment(@PathVariable (value = "id") long id, Model model, Authentication authentication, CommentEntry comment) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		comment.setCommentOrigin(ticketService.getTicketByTicketId(id));
 		comment.setCommenter(userPrincipal.getUser());
 		comment.setDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 		commentEntryService.saveComment(comment);
 		
-		Ticket ticket = ticketService.getTicketByTicketId(id);
-		model.addAttribute("ticketDetails", ticket);
+		model.addAttribute("ticketDetails", ticketService.getTicketByTicketId(id));
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
 		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
 		CommentEntry nextComment = new CommentEntry();
 		model.addAttribute("comment", nextComment);
 		return "ticket/ticket-details";
 	}
+	@PostMapping("/upload-file/{id}")
+	public String submitFile(@PathVariable(value = "id") long id, @RequestParam("file") MultipartFile file, Model model, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		Ticket ticket = ticketService.getTicketByTicketId(id);
+		try {
+			ticketFileService.saveTicketFile(file, ticket, userPrincipal.getUser());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("ticketDetails", ticket);
+		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
+		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
+		CommentEntry nextComment = new CommentEntry();
+		model.addAttribute("comment", nextComment);
+		return "ticket/ticket-details";
+	}
+	/**
+	 * Allows for file download
+	 * @param id - id of file
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws IOException
+	 */
+	@GetMapping("/download-file/{id}")
+    public String downloadFile(@PathVariable(value = "id") long id, HttpServletResponse response, Model model) throws IOException {
+		
+        TicketFile ticketFile = ticketFileService.getFile(id);
+        byte[] byteArray =  ticketFile.getData();
+        response.setContentType(MimeTypeUtils.APPLICATION_OCTET_STREAM.getType()); 
+        response.setHeader("Content-Disposition", "attachment; filename=" + ticketFile.getName());
+        response.setContentLength(byteArray.length);
+        OutputStream outputStream = response.getOutputStream();
+        try {
+            outputStream.write(byteArray, 0, byteArray.length);
+        } finally {
+            outputStream.close();
+        }
+        
+        model.addAttribute("ticketDetails", ticketService.getTicketByTicketId(id));
+		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
+		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
+		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
+		CommentEntry nextComment = new CommentEntry();
+		model.addAttribute("comment", nextComment);
+		return "ticket/ticket-details";
+    }
 	/**
 	 * Unassigns a ticket from the logged in user
 	 * @param id - id of ticket
@@ -238,17 +311,17 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/drop-ticket/{id}")
-	public String assignTicketToUser(@PathVariable (value = "id") long id, Model model, Authentication auth) {
+	public String assignTicketToUser(@PathVariable (value = "id") long id, Model model, Authentication authentication) {
 		//Updates ticket
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		ticket.setAssignedUser(null);
 		ticket.setStatus(StatusEnum.OPEN);
 		ticketService.saveTicket(ticket);
 		//Makes log for change
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User",
 				userPrincipal.getUser().getFirstName()+" "+userPrincipal.getUser().getLastName(),
-				"No one", java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+				"None", java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 		//Passes values to reload the page
 		model.addAttribute("ticketDetails", ticket);
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
@@ -261,19 +334,19 @@ public class TicketController {
 	 * Assigns a ticket to the logged in user
 	 * @param id - id of ticket
 	 * @param model
-	 * @param auth
+	 * @param authentication
 	 * @return
 	 */
 	@GetMapping("/take-ticket/{id}")
-	public String dropTicketOfUser(@PathVariable (value = "id") long id, Model model, Authentication auth) {
+	public String dropTicketOfUser(@PathVariable (value = "id") long id, Model model, Authentication authentication) {
 		//Updates ticket
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		ticket.setAssignedUser(userPrincipal.getUser());
 		ticket.setStatus(StatusEnum.TAKEN);
 		ticketService.saveTicket(ticket);
 		//Makes log for change
-		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User", "No one", 
+		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User", "None", 
 				userPrincipal.getUser().getFirstName()+" "+userPrincipal.getUser().getLastName(),
 				java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 		//Passes values to reload the page

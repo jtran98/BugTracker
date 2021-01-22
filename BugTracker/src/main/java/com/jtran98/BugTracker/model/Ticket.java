@@ -36,6 +36,8 @@ public class Ticket {
 	private Set<LogEntry> logEntryList;
 	@OneToMany(mappedBy = "commentOrigin")
 	private Set<CommentEntry> commentList;
+	@OneToMany(mappedBy = "fileOrigin")
+	private Set<TicketFile> ticketFiles;
 	
 	@ManyToOne
 	@JoinColumn(name = "assigned_id")
@@ -47,9 +49,6 @@ public class Ticket {
 	@JoinColumn(name = "project_id")
 	private Project projectSource;
 	
-	@OneToOne(mappedBy = "fileOrigin")
-	private TicketFile ticketFile;
-	
 	private String title;
 	private String description;
 	private PriorityEnum priority;
@@ -59,7 +58,6 @@ public class Ticket {
 	private String mostRecentUpdateDate;
 	
 	public Ticket() {
-		this.projectSource = new Project();
 	}
 	public long getTicketId() {
 		return ticketId;
@@ -67,11 +65,11 @@ public class Ticket {
 	public void setTicketId(long ticketId) {
 		this.ticketId = ticketId;
 	}
-	public TicketFile getTicketFile() {
-		return ticketFile;
+	public Set<TicketFile> getTicketFiles() {
+		return ticketFiles;
 	}
-	public void setTicketFile(TicketFile ticketFile) {
-		this.ticketFile = ticketFile;
+	public void setTicketFiles(Set<TicketFile> ticketFiles) {
+		this.ticketFiles = ticketFiles;
 	}
 	public Set<LogEntry> getLogEntryList() {
 		return logEntryList;

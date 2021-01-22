@@ -28,5 +28,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>{
 	 * @return
 	 */
 	public Ticket findByTicketId(Long ticketId);
+	/**
+	 * Finds ticket by submitter_id
+	 * @param userId - submitter id
+	 * @return
+	 */
 	public List<Ticket> findBySubmitter_UserId(Long userId);
 }

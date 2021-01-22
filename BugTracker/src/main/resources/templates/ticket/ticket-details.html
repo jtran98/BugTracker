@@ -80,12 +80,31 @@
   <dd class="col-sm-9" th:text="${ticketDetails.mostRecentUpdateDate}"></dd>
 </dl>
 
-<a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a><br>
-<a th:if="${#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/view-file/{id}(id=${ticketDetails.ticketId})}">View File</a>
+<a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a>
+<br>
 
-<br><br>
 
-<h3>Ticket Changes</h3>
+<table th:unless="${#lists.isEmpty(ticketFiles)}" class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Uploader</th>
+      <th scope="col">Download Link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="file : ${ticketFiles}" th:unless="${#lists.isEmpty(ticketFiles)}">
+      <td th:text="${file.uploader?.firstName + ' ' + file.uploader?.lastName}" scope="row"></td>
+      <td scope="row"><a th:text="${file.name}" th:href="@{/tickets/download-file/{id}(id=${file.fileId})}"></a></td>
+    </tr>
+  </tbody>
+</table>
+
+<form th:action="@{/tickets/upload-file/{id}(id=${ticketDetails.ticketId})}" enctype="multipart/form-data" method="POST" style="max-width: 650px;">
+	<input type="file" name="file">
+	<br><button th:if="${#authentication.principal.userId == ticketDetails.submitter?.userId}" type="submit" class="btn btn-primary" style="margin-bottom: 200px;">Upload File</button>
+</form>
+
+<h3 th:unless="${#lists.isEmpty(logEntries)}">Ticket Changes</h3>
 <table th:unless="${#lists.isEmpty(logEntries)}" class="table table-bordered table-hover">
   <thead>
     <tr>
@@ -109,7 +128,7 @@
 
 <br><br>
 
-<h3>Comments</h3>
+<h3 th:unless="${#lists.isEmpty(commentEntries)}">Comments</h3>
 <table th:unless="${#lists.isEmpty(commentEntries)}" class="table table-bordered table-hover">
   <thead>
     <tr>
@@ -133,8 +152,6 @@
 </form>
 
 </div>
-<!-- th:href="${/tickets/make-comment/{id}(id=${ticketDetails.ticketId})}" -->
-
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </body>
