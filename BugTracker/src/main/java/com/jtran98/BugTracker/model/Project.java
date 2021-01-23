@@ -32,8 +32,6 @@ public class Project {
 	private String projectName;
 	
 	public Project() {
-		this.projectId = -1;
-		this.projectName = "No project";
 	}
 	
 	public long getProjectId() {

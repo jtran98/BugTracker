@@ -25,7 +25,7 @@
 	      <th scope="col">Type</th>
 	      <th scope="col">Submission Date</th>
 	      <th scope="col">Last Ticket Update</th>
-	      <th scope="col">Actions</th>
+	      <th scope="col" colspan="2" align="center">Actions</th>
 	    </tr>
 	  </thead>
 	  <tbody>
@@ -38,6 +38,7 @@
 	      <td th:text="${ticket.creationDate}" scope="row"></td>
 	      <td th:text="${ticket.mostRecentUpdateDate}" scope="row"></td>
 	      <td><a th:href="@{/tickets/view-details/{id}(id=${ticket.ticketId})}">Details</a></td>
+	      <td><a sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')" th:href="@{/tickets/delete-ticket/{id}(id=${ticket.ticketId})}" class="btn btn-danger">Delete</a></td>
 	    </tr>
 	  </tbody>
 	</table>
@@ -52,7 +53,7 @@
 	      <th scope="col">Type</th>
 	      <th scope="col">Submission Date</th>
 	      <th scope="col">Last Ticket Update</th>
-	      <th scope="col">Actions</th>
+	      <th scope="col" colspan="2" align="center">Actions</th>
 	    </tr>
 	  </thead>
 	  <tbody>
@@ -64,6 +65,7 @@
 	      <td th:text="${ticket.creationDate}" scope="row"></td>
 	      <td th:text="${ticket.mostRecentUpdateDate}" scope="row"></td>
 	      <td><a th:href="@{/tickets/view-details/{id}(id=${ticket.ticketId})}">Details</a></td>
+	      <td><a sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')" th:href="@{/tickets/delete-ticket/{id}(id=${ticket.ticketId})}" class="btn btn-danger">Delete</a></td>
 	    </tr>
 	  </tbody>
 	</table>

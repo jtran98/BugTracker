@@ -36,12 +36,12 @@ public class UserController {
 		model.addAttribute("viewProjectMembers", true);
 		model.addAttribute("projectMembers", userService.getProjectMembers(userPrincipal.getProjectId()));
 		model.addAttribute("userComparator", userComparator);
-		return "/user/view-users";
+		return "/user/view-users.html";
 	}
 	@GetMapping("/view-user/{id}")
 	public String viewUser(@PathVariable (value = "id") long id, Model model) {
 		model.addAttribute("user", userService.getUser(id));
 		model.addAttribute("ticketComparator", ticketComparator);
-		return "/user/user-details";
+		return "/user/user-details.html";
 	}
 }

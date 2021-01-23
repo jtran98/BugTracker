@@ -21,8 +21,8 @@
   <dt class="col-sm-3" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId != #authentication.principal.userId}">Assigned to</dt>
   <dt class="col-sm-3" th:if="${ticketDetails.assignedUser == null}">No one assigned</dt>
   <dd class="col-sm-9" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId != #authentication.principal.userId}" th:text="${ticketDetails.assignedUser?.firstName + ' ' + ticketDetails.assignedUser?.lastName}"></dd>
-  <dd class="col-sm-9" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId == #authentication.principal.userId}"><form th:action="@{/tickets/drop-ticket/{id}(id=${ticketDetails.ticketId})}"><button type="submit" class="btn btn-danger">Drop Ticket</button></form></dd>
-  <dd class="col-sm-9" th:if="${ticketDetails.assignedUser == null}"><form th:action="@{/tickets/take-ticket/{id}(id=${ticketDetails.ticketId})}"><button type="submit" class="btn btn-success">Take ticket</button></form></dd>
+  <dd class="col-sm-9" th:if="${ticketDetails.assignedUser != null && ticketDetails.assignedUser.userId == #authentication.principal.userId}"><a th:href="@{/tickets/drop-ticket/{id}(id=${ticketDetails.ticketId})}" class="btn btn-danger">Drop Ticket</a></dd>
+  <dd class="col-sm-9" th:if="${ticketDetails.assignedUser == null}"><a th:href="@{/tickets/take-ticket/{id}(id=${ticketDetails.ticketId})}" class="btn btn-success">Take ticket</a></dd>
   <dt class="col-sm-3">Submitter</dt>
   <dd class="col-sm-9" th:text="${ticketDetails.submitter?.firstName + ' ' + ticketDetails.submitter?.lastName}"></dd>
   <dt class="col-sm-3">Submission Date</dt>
@@ -41,7 +41,7 @@
 
 <br>
 
-<a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}">Update Ticket</a>
+<a th:if="${#authentication.principal.userId == ticketDetails.assignedUser?.userId ||#authentication.principal.userId == ticketDetails.submitter?.userId}" th:href="@{/tickets/update-ticket/{id}(id=${ticketDetails.ticketId})}" class="btn btn-warning">Update Ticket</a>
 
 <br><br>
 

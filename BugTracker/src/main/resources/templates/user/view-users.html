@@ -27,7 +27,7 @@
 	      <th scope="col" colspan="2" align="center">Actions</th>
 	    </tr>
 	  </thead>
-	  <tbody>
+	  <tbody th:if="${projectMembers != null}">
 	    <tr th:each="user : ${#lists.sort(projectMembers, userComparator)}">
 	      <td th:text="${user.firstName + ' ' + user.lastName}" scope="row"></td>
 	      <td th:text="${user.role}" scope="row"></td>
