@@ -9,6 +9,13 @@ import com.jtran98.BugTracker.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
+	
+	/**
+	 * Finds user by their id
+	 * @param userId - user id
+	 * @return
+	 */
+	public User findByUserId(Long userId);
 	/**
 	 * Find user by their login username
 	 * @param Username - user's username
@@ -21,4 +28,5 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	 * @return
 	 */
 	public List<User> findByProjectTeam_projectId(Long projectId);
+	
 }

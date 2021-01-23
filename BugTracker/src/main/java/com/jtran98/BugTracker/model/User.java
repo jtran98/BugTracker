@@ -1,5 +1,6 @@
 package com.jtran98.BugTracker.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.jtran98.BugTracker.enums.AuthorityEnum;
+import com.jtran98.BugTracker.enums.StatusEnum;
 
 /**
  * User object. Holds user's login credentials as well as information such as the project team they belong to, and tickets they're working on/have submitted
@@ -52,6 +54,44 @@ public class User {
 	
 	public long getUserId() {
 		return userId;
+	}
+	/**
+	 * 
+	 * @return - list of tickets user has submitted and have not yet been completed (does not include tickets the user has both submitted and taken)
+	 */
+	public Set<Ticket> getSubmittedTicketsInProgressAndNotAssigned(){
+		Set<Ticket> submittedInProgress = new HashSet<Ticket>();
+		for(Ticket ticket : submittedTickets) {
+			if(!ticket.getStatus().equals(StatusEnum.DONE) && ticket.getAssignedUser().getUserId() != this.userId) {
+				submittedInProgress.add(ticket);
+			}
+		}
+		return submittedInProgress;
+	}
+	/**
+	 * @return - list of tickets user has currently taken
+	 */
+	public Set<Ticket> getAssignedTicketsInProgress() {
+		Set<Ticket> assignedInProgress = new HashSet<Ticket>();
+		for(Ticket ticket : assignedTickets) {
+			if(ticket.getStatus().equals(StatusEnum.TAKEN)) {
+				assignedInProgress.add(ticket);
+			}
+		}
+		return assignedInProgress;
+		
+	}
+	public String getAssignedTicketTitles() {
+		String titles = "";
+		for(Ticket ticket : assignedTickets) {
+			if(ticket.getStatus().equals(StatusEnum.TAKEN))
+			titles += "\""+ticket.getTitle() + "\", ";
+		}
+		//trim final ", " if user had any tickets
+		if(titles.length() > 0) {
+			return titles.substring(0, titles.length()-2);
+		}
+		return "Not currently assigned to any tickets";
 	}
 	public void setUserId(long userId) {
 		this.userId = userId;

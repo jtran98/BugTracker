@@ -17,15 +17,15 @@
 	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Project</a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/tickets/project-tickets">Tickets</a>
-            <a class="dropdown-item" href= "/project/project-members" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')">Members</a>
+			<a class="dropdown-item" href = "/tickets/my-project-tickets">Tickets</a>
+            <a class="dropdown-item" href= "/users/my-project-members" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')">Members</a>
         </div>
 	</li>
 	<li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tickets</a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<a class="dropdown-item" href = "/tickets/assigned-tickets" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Assigned</a>
-            <a class="dropdown-item" href= "/tickets/submitted-tickets">Submitted</a>
+			<a class="dropdown-item" href = "/tickets/my-assigned-tickets" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER','DEVELOPER')">Assigned</a>
+            <a class="dropdown-item" href= "/tickets/my-submitted-tickets">Submitted</a>
         </div>
 	</li>
 	<li class="nav-item dropdown" sec:authorize="hasAuthority('ADMINISTRATOR')">

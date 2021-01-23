@@ -69,7 +69,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/assigned-tickets")
+	@GetMapping("/my-assigned-tickets")
 	public String getAssignedTicketsOfCurrentUser(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
@@ -82,7 +82,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/submitted-tickets")
+	@GetMapping("/my-submitted-tickets")
 	public String getSubmittedTicketsOfCurrentUser(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
@@ -96,7 +96,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/project-tickets")
+	@GetMapping("/my-project-tickets")
 	public String getTicketsByProjectId(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("viewTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));

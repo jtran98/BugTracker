@@ -6,8 +6,8 @@ package com.jtran98.BugTracker.enums;
  *
  */
 public enum AuthorityEnum {
-	SUBMITTER,
-	DEVELOPER,
+	ADMINISTRATOR,
 	PROJECTMANAGER,
-	ADMINISTRATOR;
+	DEVELOPER,
+	SUBMITTER;
 }
