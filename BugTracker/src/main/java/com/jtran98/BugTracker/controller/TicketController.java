@@ -71,6 +71,11 @@ public class TicketController {
 		model.addAttribute("ticketComparator", ticketComparator);
 		return "/ticket/view-tickets.html";
 	}
+	/**
+	 * Redirect for ticket-details page
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/ticket-details")
 	public String ticketDetails(Model model) {
 		model.addAttribute("ticketDetails", ticketService.getTicketByTicketId(ticketDetailsId));
@@ -100,10 +105,9 @@ public class TicketController {
 	@GetMapping("/my-assigned-tickets")
 	public String getAssignedTicketsOfCurrentUser(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
-		model.addAttribute("viewAssignedTickets", true);
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets.html";
+		viewPageType = "viewAssignedTickets";
+		ticketsToLoad = ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId());
+		return "redirect:/tickets/view-tickets";
 	}
 	/**
 	 * Gets all tickets the currently authenticated user submitted
@@ -113,10 +117,9 @@ public class TicketController {
 	@GetMapping("/my-submitted-tickets")
 	public String getSubmittedTicketsOfCurrentUser(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
-		model.addAttribute("viewSubmittedTickets", true);
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets.html";
+		viewPageType = "viewSubmittedTickets";
+		ticketsToLoad = ticketService.getTicketsUserSubmitted(userPrincipal.getUserId());
+		return "redirect:/tickets/view-tickets";
 	}
 	
 	/**
@@ -127,10 +130,9 @@ public class TicketController {
 	@GetMapping("/my-project-tickets")
 	public String getTicketsByProjectId(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-		model.addAttribute("viewTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));
-		model.addAttribute("viewProjectTickets", true);
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets.html";
+		viewPageType = "viewProjectTickets";
+		ticketsToLoad = ticketService.getTicketsOfProject(userPrincipal.getProjectId());
+		return "redirect:/tickets/view-tickets";
 	}
 	
 	
@@ -189,10 +191,8 @@ public class TicketController {
 			}
 		}
 		ticketService.saveTicket(ticket);
-		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
-		model.addAttribute("viewSubmittedTickets", true);
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets.html";
+		
+		return "redirect:/tickets/ticket-details";
 	}
 	/**
 	 * Takes user to ticket modification page
