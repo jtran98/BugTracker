@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.jtran98.BugTracker.enums.StatusEnum;
 import com.jtran98.BugTracker.model.CommentEntry;
@@ -52,16 +55,41 @@ public class TicketController {
 	@Autowired
 	private TicketComparator ticketComparator;
 	
+	private String viewPageType;
+	private List<Ticket> ticketsToLoad;
+	private long ticketDetailsId;
 	
+	/**
+	 * Redirect for view-tickets page
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/view-tickets")
+	public String viewTickets(Model model) {
+		model.addAttribute("viewTickets", ticketsToLoad);
+		model.addAttribute(viewPageType, true);
+		model.addAttribute("ticketComparator", ticketComparator);
+		return "/ticket/view-tickets.html";
+	}
+	@GetMapping("/ticket-details")
+	public String ticketDetails(Model model) {
+		model.addAttribute("ticketDetails", ticketService.getTicketByTicketId(ticketDetailsId));
+		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(ticketDetailsId));
+		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(ticketDetailsId));
+		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(ticketDetailsId));
+		model.addAttribute("comment", new CommentEntry());
+		return "/ticket/ticket-details.html";
+	}
 	/**
 	 * Gets all tickets
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/all")
-	public String viewHomePage(Model model) {
-		model.addAttribute("viewTickets", ticketService.getAllTickets());
-		return "/ticket/view-tickets";
+	@GetMapping("/manage-tickets")
+	public String getAllTickets() {
+		viewPageType = "viewAllTickets";
+		ticketsToLoad = ticketService.getAllTickets();
+		return "redirect:/tickets/view-tickets";
 	}
 	
 	/**
@@ -75,7 +103,7 @@ public class TicketController {
 		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
 		model.addAttribute("viewAssignedTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets";
+		return "/ticket/view-tickets.html";
 	}
 	/**
 	 * Gets all tickets the currently authenticated user submitted
@@ -88,7 +116,7 @@ public class TicketController {
 		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
 		model.addAttribute("viewSubmittedTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets";
+		return "/ticket/view-tickets.html";
 	}
 	
 	/**
@@ -102,7 +130,7 @@ public class TicketController {
 		model.addAttribute("viewTickets", ticketService.getTicketsOfProject(userPrincipal.getProjectId()));
 		model.addAttribute("viewProjectTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets";
+		return "/ticket/view-tickets.html";
 	}
 	
 	
@@ -164,7 +192,7 @@ public class TicketController {
 		model.addAttribute("viewTickets", ticketService.getTicketsUserSubmitted(userPrincipal.getUserId()));
 		model.addAttribute("viewSubmittedTickets", true);
 		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets";
+		return "/ticket/view-tickets.html";
 	}
 	/**
 	 * Takes user to ticket modification page
@@ -175,7 +203,7 @@ public class TicketController {
 	public String createNewTicketForm(Model model) {
 		Ticket ticket = new Ticket();
 		model.addAttribute("modifyTicket", ticket);
-		return "/ticket/modify-ticket";
+		return "/ticket/modify-ticket.html";
 	}
 	/**
 	 * Takes user to ticket modification page, with the ticket's existing values prefilled
@@ -187,7 +215,7 @@ public class TicketController {
 	public String updateTicket(@PathVariable (value = "id") long id, Model model) {
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		model.addAttribute("modifyTicket", ticket);
-		return "/ticket/modify-ticket";
+		return "/ticket/modify-ticket.html";
 	}
 	/**
 	 * Deletes ticket and all accompanying comments
@@ -203,10 +231,8 @@ public class TicketController {
 		ticketService.deleteTicketByTicketId(id);
 		
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-		model.addAttribute("viewTickets", ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId()));
-		model.addAttribute("viewAssignedTickets", true);
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/ticket/view-tickets";
+		ticketsToLoad = ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId());
+		return "redirect:/tickets/view-tickets";
 	}
 	/**
 	 * Views a ticket in more detail
@@ -216,14 +242,8 @@ public class TicketController {
 	 */
 	@GetMapping("/view-details/{id}")
 	public String viewTicketDetails(@PathVariable (value = "id") long id, Model model) {
-		Ticket ticket = ticketService.getTicketByTicketId(id);
-		model.addAttribute("ticketDetails", ticket);
-		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
-		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
-		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
-		CommentEntry comment = new CommentEntry();
-		model.addAttribute("comment", comment);
-		return "/ticket/ticket-details";
+		ticketDetailsId = id;
+		return "redirect:/tickets/ticket-details";
 	}
 	/**
 	 * Creates a comment on a ticket's detail page
@@ -241,14 +261,17 @@ public class TicketController {
 		comment.setDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 		commentEntryService.saveComment(comment);
 		
-		model.addAttribute("ticketDetails", ticketService.getTicketByTicketId(id));
-		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
-		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
-		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
-		CommentEntry nextComment = new CommentEntry();
-		model.addAttribute("comment", nextComment);
-		return "ticket/ticket-details";
+		ticketDetailsId = id;
+		return "redirect:/tickets/ticket-details";
 	}
+	/**
+	 * Uploads file tied to given ticket
+	 * @param id - ticket id
+	 * @param file
+	 * @param model
+	 * @param authentication
+	 * @return
+	 */
 	@PostMapping("/upload-file/{id}")
 	public String submitFile(@PathVariable(value = "id") long id, @RequestParam("file") MultipartFile file, Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
@@ -259,13 +282,8 @@ public class TicketController {
 			e.printStackTrace();
 		}
 		
-		model.addAttribute("ticketDetails", ticket);
-		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
-		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
-		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
-		CommentEntry nextComment = new CommentEntry();
-		model.addAttribute("comment", nextComment);
-		return "ticket/ticket-details";
+		ticketDetailsId = id;
+		return "redirect:/tickets/ticket-details";
 	}
 	/**
 	 * Allows for file download
@@ -291,13 +309,7 @@ public class TicketController {
             outputStream.close();
         }
         
-        model.addAttribute("ticketDetails", ticketService.getTicketByTicketId(id));
-		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
-		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
-		model.addAttribute("ticketFiles", ticketFileService.getFilesOfTicket(id));
-		CommentEntry nextComment = new CommentEntry();
-		model.addAttribute("comment", nextComment);
-		return "ticket/ticket-details";
+		return "redirect:/tickets/ticket-details";
     }
 	/**
 	 * Unassigns a ticket from the logged in user
@@ -317,13 +329,9 @@ public class TicketController {
 		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User",
 				userPrincipal.getUser().getFirstName()+" "+userPrincipal.getUser().getLastName(),
 				"None", java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
-		//Passes values to reload the page
-		model.addAttribute("ticketDetails", ticket);
-		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
-		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
-		CommentEntry nextComment = new CommentEntry();
-		model.addAttribute("comment", nextComment);
-		return "ticket/ticket-details";
+		
+		ticketDetailsId = id;
+		return "redirect:/tickets/ticket-details";
 	}
 	/**
 	 * Assigns a ticket to the logged in user
@@ -344,12 +352,8 @@ public class TicketController {
 		logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Assigned User", "None", 
 				userPrincipal.getUser().getFirstName()+" "+userPrincipal.getUser().getLastName(),
 				java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
-		//Passes values to reload the page
-		model.addAttribute("ticketDetails", ticket);
-		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(id));
-		model.addAttribute("logEntries", logEntryService.getLogsOfTicket(id));
-		CommentEntry nextComment = new CommentEntry();
-		model.addAttribute("comment", nextComment);
-		return "ticket/ticket-details";
+		
+		ticketDetailsId = id;
+		return "redirect:/tickets/ticket-details";
 	}
 }
