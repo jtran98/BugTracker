@@ -1,31 +1,23 @@
 package com.jtran98.BugTracker.controller;
 
-import java.util.Collection;
+import java.util.List;
 
-import javax.validation.Valid;
+import javax.transaction.Transactional;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.jtran98.BugTracker.enums.AuthorityEnum;
-import com.jtran98.BugTracker.model.Project;
 import com.jtran98.BugTracker.model.User;
 import com.jtran98.BugTracker.security.UserPrincipal;
-import com.jtran98.BugTracker.security.UserPrincipalDetailsService;
 import com.jtran98.BugTracker.service.ProjectService;
 import com.jtran98.BugTracker.service.TicketService;
 import com.jtran98.BugTracker.service.UserService;
@@ -52,7 +44,41 @@ public class UserController {
 	
 	private final int MINIMUM_PASSWORD_LENGTH_ALLOWED = 6;
 	
+	private long userDetailsId;
+	private String viewUsersPage;
+	private List<User> usersToLoad;
+	private final String VIEW_USERS_PROJECT_PAGE = "viewProjectUsers";
+	private final String VIEW_USERS_ALL_PAGE = "viewAllUsers";
+	private final String CHANGED_SETTINGS = "changedSettings";
 	
+	/**
+	 * Redirect for user details page
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/user-details")
+	public String viewUserDetails(Model model) {
+		model.addAttribute("user", userService.getUser(userDetailsId));
+		model.addAttribute("userProjectUpdate", userService.getUser(userDetailsId));
+		model.addAttribute("userRoleUpdate", userService.getUser(userDetailsId));
+		model.addAttribute("projectList", projectService.getAllProjects());
+		model.addAttribute("ticketComparator", ticketComparator);
+		return "/user/user-details.html";
+	}
+	@GetMapping("/view-users")
+	public String viewUsers(Model model) {
+		model.addAttribute(viewUsersPage, true);
+		model.addAttribute("viewUsers", usersToLoad);
+		model.addAttribute("userComparator", userComparator);
+		model.addAttribute("projectList", projectService.getAllProjects());
+		return "/user/view-users.html";
+	}
+	/**
+	 * Makes sure user's new password is valid before updating it, encrypts the password before saving to DB
+	 * @param user - user DTO that will be updated
+	 * @param model
+	 * @return
+	 */
 	@PostMapping("/update-password")
 	public String updatePassword(@ModelAttribute("user") User user, Model model) {
 		if(user.getPassword().equals("")) {
@@ -73,9 +99,15 @@ public class UserController {
 		user.setMatchingPassword(passwordEncoder.encode(user.getMatchingPassword()));
 		userService.saveUser(user);
 		
-		model.addAttribute("changedSettings", true);
+		model.addAttribute(CHANGED_SETTINGS, true);
 		return "/login.html";
 	}
+	/**
+	 * Makes sure user's new username is valid before updating it
+	 * @param user - user DTO to be updated
+	 * @param model
+	 * @return
+	 */
 	@PostMapping("/update-username")
 	public String updateUsername(@ModelAttribute("user") User user, Model model) {
 		if(user.getUsername().equals("")) {
@@ -93,22 +125,32 @@ public class UserController {
 		user.setActive(true);
 		userService.saveUser(user);
 		
-		model.addAttribute("changedSettings", true);
+		model.addAttribute(CHANGED_SETTINGS, true);
 		return "/login.html";
 	}
+	/**
+	 * Takes user to their settings page
+	 * @param model
+	 * @param authentication
+	 * @return
+	 */
 	@GetMapping("/settings")
 	public String viewSettings(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("user", userPrincipal.getUser());
 		return "/user/settings.html";
 	}
+	/**
+	 * Enables a view of all users, attributes passed through allow admins to enable/disable accounts
+	 * @param model
+	 * @param authentication
+	 * @return
+	 */
 	@GetMapping("/manage-users")
 	public String viewAllUsers(Model model, Authentication authentication) {
-		model.addAttribute("viewAllUsers", true);
-		model.addAttribute("viewUsers", userService.getAllUsers());
-		model.addAttribute("userComparator", userComparator);
-		model.addAttribute("projectList", projectService.getAllProjects());
-		return "/user/view-users.html";
+		viewUsersPage = VIEW_USERS_ALL_PAGE;
+		usersToLoad = userService.getAllUsers();
+		return "redirect:/users/view-users";
 	}
 	/**
 	 * Views project team mates of currently authenticated user
@@ -118,14 +160,15 @@ public class UserController {
 	@GetMapping("/my-project-members")
 	public String viewProjectMembers(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-		model.addAttribute("viewProjectUsers", true);
+		model.addAttribute(VIEW_USERS_PROJECT_PAGE, true);
 		model.addAttribute("viewUsers", userService.getProjectMembers(userPrincipal.getProjectId()));
 		model.addAttribute("userComparator", userComparator);
+		model.addAttribute("projectList", projectService.getAllProjects());
 		return "/user/view-users.html";
 	}
 	/**
 	 * Disables user account. Effectively acts like archiving, as none of their actions or items are deleted
-	 * @param id
+	 * @param id - user id
 	 * @param model
 	 * @return
 	 */
@@ -136,42 +179,54 @@ public class UserController {
 		ticketService.removeAllTicketAssignedAssociation(id);
 		user.setProjectTeam(null);
 		userService.saveUser(user);
-		model.addAttribute("viewAllUsers", true);
-		model.addAttribute("viewUsers", userService.getAllUsers());
-		model.addAttribute("userComparator", userComparator);
-		return "/user/view-users.html";
+		
+		usersToLoad = userService.getAllUsers();
+		viewUsersPage = VIEW_USERS_ALL_PAGE;
+		return "redirect:/user/view-users";
 	}
+	/**
+	 * Re-enables account. Does not reassign any tickets or the project they lost
+	 * @param id - user id
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/enable-account/{id}")
 	public String enableUserAccount(@PathVariable(value = "id") long id, Model model) {
 		User user = userService.getUser(id);
 		user.setActive(true);
 		userService.saveUser(user);
-		model.addAttribute("viewAllUsers", true);
-		model.addAttribute("viewUsers", userService.getAllUsers());
-		model.addAttribute("userComparator", userComparator);
-		return "/user/view-users.html";
+		
+		usersToLoad = userService.getAllUsers();
+		viewUsersPage = VIEW_USERS_ALL_PAGE;
+		return "redirect:/users/view-users";
 	}
+	/**
+	 * Assigns user to project
+	 * @param user - user DTO to be modified
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/assign-user-to-project")
 	public String assignUserToProject(User user, Model model) {
 		user.setActive(true);
 		userService.saveUser(user);
-		model.addAttribute("user", userService.getUser(user.getUserId()));
-		model.addAttribute("userProjectUpdate", userService.getUser(user.getUserId()));
-		model.addAttribute("userRoleUpdate", userService.getUser(user.getUserId()));
-		model.addAttribute("projectList", projectService.getAllProjects());
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/user/user-details.html";
+		
+		userDetailsId = user.getUserId();
+		return "redirect:/users/user-details";
 	}
+	/**
+	 * Assigns user to role
+	 * @param user - user DTO to be modified
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/assign-user-to-role")
 	public String assignUserToRole(User user, Model model) {
 		user.setActive(true);
 		userService.saveUser(user);
-		model.addAttribute("user", userService.getUser(user.getUserId()));
-		model.addAttribute("userProjectUpdate", userService.getUser(user.getUserId()));
-		model.addAttribute("userRoleUpdate", userService.getUser(user.getUserId()));
-		model.addAttribute("projectList", projectService.getAllProjects());
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/user/user-details.html";
+		
+		userDetailsId = user.getUserId();
+		return "redirect:/users/user-details";
 	}
 	
 	/**
@@ -182,12 +237,9 @@ public class UserController {
 	 */
 	@GetMapping("/view-user/{id}")
 	public String viewUser(@PathVariable (value = "id") long id, Model model) {
-		model.addAttribute("user", userService.getUser(id));
-		model.addAttribute("userProjectUpdate", userService.getUser(id));
-		model.addAttribute("userRoleUpdate", userService.getUser(id));
-		model.addAttribute("projectList", projectService.getAllProjects());
-		model.addAttribute("ticketComparator", ticketComparator);
-		return "/user/user-details.html";
+		
+		userDetailsId = id;
+		return "redirect:/users/user-details";
 	}
 	/**
 	 * Takes you to the form to create a new user

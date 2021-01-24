@@ -33,7 +33,7 @@
 	    <tr th:each="user : ${#lists.sort(viewUsers, userComparator)}">
 	      <td th:text="${user.firstName + ' ' + user.lastName}" scope="row"></td>
 	      <td th:text="${user.role}" scope="row"></td>
-	      <td th:if="${viewProjectUsers}" th:text="${user.getAssignedTicketTitles()}" scope="row"></td>
+	      <td th:if="${viewProjectUsers}" th:text="${user?.getAssignedTicketTitles()}" scope="row"></td>
 	      <td th:if=${viewAllUsers} th:text="${user.isActive} ? 'Active' : 'Inactive'" scope="row"></td>
 	      <td><a th:href="@{/users/view-user/{id}(id=${user.userId})}">View</a></td>
 	      <!-- Admin actions -->

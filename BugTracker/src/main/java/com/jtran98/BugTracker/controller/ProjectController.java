@@ -33,23 +33,45 @@ public class ProjectController {
 	@Autowired
 	private ProjectComparator projectComparator;
 	
+	/**
+	 * Returns a view of all projects that exist
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/manage-projects")
 	public String getAllProjects(Model model) {
 		model.addAttribute("projects", projectService.getAllProjects());
 		model.addAttribute("projectComparator", projectComparator);
 		return "/project/view-projects.html";
 	}
+	/**
+	 * Loads a form to update a project
+	 * @param id - project id
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/update-project/{id}")
 	public String renameProject(@PathVariable(value = "id") long id,  Model model) {
 		model.addAttribute("modifyProject", projectService.getProjectById(id));
 		return "/project/modify-project.html";
 	}
+	/**
+	 * Loads a form to create a new project
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/create-new-project")
 	public String createNewProject(Model model) {
 		Project project = new Project();
 		model.addAttribute("modifyProject", project);
 		return "/project/modify-project.html";
 	}
+	/**
+	 * Deletes a project, removes all ticket and user associations first
+	 * @param id - project id
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/delete-project/{id}")
 	public String deleteProject(@PathVariable(value = "id") long id, Model model) {
 		for(Ticket ticket : ticketService.getTicketsOfProject(id)) {
@@ -63,6 +85,12 @@ public class ProjectController {
 		model.addAttribute("projectComparator", projectComparator);
 		return "/project/view-projects.html";
 	}
+	/**
+	 * Saves a project
+	 * @param project
+	 * @param model
+	 * @return
+	 */
 	@PostMapping("/save-project")
 	public String saveProject(@ModelAttribute("modifyProject") Project project, Model model) {
 		projectService.saveProject(project);
