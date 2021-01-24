@@ -12,13 +12,16 @@
 	<div align="center">
 		<br>
 		<h2>Save Project</h2><br>
-		<form th:action="@{/projects/save-project}" th:object = "${modifyProject}" method="POST" style="max-width: 650px;">
+		<form th:action="@{/projects/save-project}" th:object = "${modifyProject}" method="POST" style="max-width: 550px;">
 			
 			<!-- This field is required, otherwise the form creates NEW projects instead of updating an existing one-->
 			<input type = "hidden" th:field="*{projectId}">
 			
 			<label>Project Name</label>
 			<input class="form-control" type="text" th:field = "*{projectName}" placeholder="Project Name">
+			<br>
+			<label>Description</label>
+			<input class="form-control" type="text" th:field = "*{projectDescription}" placeholder="Description">
 			<br>
 			<button type="submit" class="btn btn-primary">Save</button>
 		</form>

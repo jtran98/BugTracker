@@ -26,12 +26,14 @@
 	  <thead>
 	    <tr>
 	      <th scope="col">Project Name</th>
+	      <th scope="col">Description</th>
 	      <th scope="col" colspan="2" align="center">Actions</th>
 	    </tr>
 	  </thead>
 	  <tbody th:if="${projects != null}">
 	    <tr th:each="project : ${#lists.sort(projects, projectComparator)}">
 	      <td th:text="${project.projectName}" scope="row"></td>
+	      <td th:text="${project.projectDescription}" scope="row"></td>
 	      <td><a th:href="@{/projects/update-project/{id}(id=${project.projectId})}">Edit</a></td>
 	    </tr>
 	  </tbody>

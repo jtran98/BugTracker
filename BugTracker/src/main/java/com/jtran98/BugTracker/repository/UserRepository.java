@@ -28,5 +28,10 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	 * @return
 	 */
 	public List<User> findByProjectTeam_projectId(Long projectId);
-	
+	/**
+	 * Finds first user with username
+	 * @param username - username
+	 * @return
+	 */
+	public User findFirstByUsername(String username);
 }

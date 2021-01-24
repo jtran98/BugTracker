@@ -12,7 +12,7 @@
 	<div align="center">
 		<br>
 		<h2>Save Ticket</h2><br>
-		<form th:action="@{/tickets/save-ticket}" th:object = "${modifyTicket}" method="POST" style="max-width: 650px;">
+		<form th:action="@{/tickets/save-ticket}" th:object = "${modifyTicket}" method="POST" style="max-width: 550px;">
 			
 			<!-- This field is required, otherwise the form creates NEW tickets instead of updating an existing one-->
 			<input type = "hidden" th:field="*{ticketId}">
@@ -24,8 +24,11 @@
 			
 			<label>Title</label>
 			<input class="form-control" type="text" th:field = "*{title}" placeholder="Ticket Title">
+			<br>
 			<label>Description</label>
-			<input class="form-control" type="text" th:field = "*{description}" placeholder="Ticket Description">
+			<textarea class="form-control" th:field = "*{description}" placeholder="Ticket Description"></textarea>
+			<br>
+			<div style="max-width: 125px;">
 			<label>Issue Type</label>
 			<select class="form-control" th:field="*{type}">
 				<option th:each="ticketType : ${T(com.jtran98.BugTracker.enums.TypeEnum).values()}"
@@ -33,6 +36,7 @@
 		            th:text="${ticketType}">
 			    </option>
 			</select>
+			<br>
 			<label>Priority Level</label>
 			<select class="form-control" th:field="*{priority}">
 				<option th:each="ticketPriority : ${T(com.jtran98.BugTracker.enums.PriorityEnum).values()}"
@@ -40,6 +44,7 @@
 		            th:text="${ticketPriority}">
 			    </option>
 			</select>
+			<br>
 			<label>Status</label>
 			<select class="form-control" th:field="*{status}">
 				<option th:each="ticketStatus : ${T(com.jtran98.BugTracker.enums.StatusEnum).values()}"
@@ -47,7 +52,9 @@
 		            th:text="${ticketStatus}">
 			    </option>
 			</select>
-			<br><button type="submit" class="btn btn-primary">Save</button>
+			</div>
+			<br><br><br><br>
+			<button type="submit" class="btn btn-primary">Save</button>
 		</form>
 		<br>
 		<a th:if="${modifyTicket.creationDate != null}" sec:authorize="hasAnyAuthority('ADMINISTRATOR','PROJECTMANAGER')" th:href="@{/tickets/delete-ticket/{id}(id=${modifyTicket.ticketId})}" class="btn btn-danger">Delete Ticket</a>

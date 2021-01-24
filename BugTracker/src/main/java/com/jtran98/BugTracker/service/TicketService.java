@@ -25,12 +25,14 @@ public class TicketService{
 	}
 	/**
 	 * Saves a ticket to the repository
+	 * @param ticket - ticket
 	 */
 	public void saveTicket(Ticket ticket) {
 		this.ticketRepository.save(ticket);
 	}
 	/**
 	 * Get a ticket based on its id
+	 * @param id - ticket id
 	 */
 	public Ticket getTicketByTicketId(long id) {
 		return ticketRepository.findByTicketId(id);
@@ -38,13 +40,16 @@ public class TicketService{
 	
 	/**
 	 * Deletes a specific ticket based on its id
+	 * @param id - ticket id
 	 */
 	public void deleteTicketByTicketId(long id) {
 		ticketRepository.deleteById(id);
 	}
 	
 	/**
-	 * Get all tickets assigned to a user
+	 * Get tickets of assigned user
+	 * @param id - user id
+	 * @return
 	 */
 	public List<Ticket> getTicketsOfAssignedUser(long id){
 		return ticketRepository.findByAssignedUser_UserId(id);
@@ -52,6 +57,8 @@ public class TicketService{
 	
 	/**
 	 * Get all tickets that belong to a specific project
+	 * @param id - project id
+	 * @return
 	 */
 	public List<Ticket> getTicketsOfProject(long id){
 		return ticketRepository.findByProjectSource_ProjectId(id);

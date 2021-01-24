@@ -14,7 +14,11 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 	
-	
+	/**
+	 * Finds user by their user id
+	 * @param userId - user id
+	 * @return
+	 */
 	public User getUser(long userId) {
 		return this.userRepository.findByUserId(userId);
 	}
@@ -33,5 +37,18 @@ public class UserService {
 	public List<User> getProjectMembers(Long projectId){
 		return this.userRepository.findByProjectTeam_projectId(projectId);
 	}
-	
+	/**
+	 * Sees if a user with a username exists
+	 * @param username - username to check
+	 * @return
+	 */
+	public boolean hasUserWithUsername(String username) {
+		if(this.userRepository.findFirstByUsername(username) != null) {
+			return true;
+		}
+		return false;
+	}
+	public void saveUser(User user) {
+		this.userRepository.save(user);
+	}
 }

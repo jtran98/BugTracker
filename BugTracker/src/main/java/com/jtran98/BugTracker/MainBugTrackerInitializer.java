@@ -22,7 +22,6 @@ public class MainBugTrackerInitializer implements WebApplicationInitializer{
     }
     @Override
     public void onStartup(ServletContext sc) throws ServletException {
-        
         ServletRegistration.Dynamic appServlet = sc.addServlet("mvc", new DispatcherServlet(new GenericWebApplicationContext()));
         appServlet.setLoadOnStartup(1);
         MultipartConfigElement multipartConfigElement = new MultipartConfigElement(TMP_FOLDER, MAX_UPLOAD_SIZE, MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2);

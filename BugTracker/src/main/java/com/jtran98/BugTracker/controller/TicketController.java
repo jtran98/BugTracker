@@ -55,6 +55,9 @@ public class TicketController {
 	@Autowired
 	private TicketComparator ticketComparator;
 	
+	/*
+	 * Variables for redirects (to reduce reused code, as well as get rid of form resubmission)
+	 */
 	private String viewPageType;
 	private List<Ticket> ticketsToLoad;
 	private long ticketDetailsId;
@@ -155,6 +158,11 @@ public class TicketController {
 			if(ticket.getStatus().toString().equalsIgnoreCase(StatusEnum.TAKEN.toString())) {
 				ticket.setAssignedUser(userPrincipal.getUser());
 			}
+			
+			ticketService.saveTicket(ticket);
+			viewPageType = "viewAssignedTickets";
+			ticketsToLoad = ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId());
+			return "redirect:/tickets/view-tickets";
 		}
 		else {
 			ticket.setMostRecentUpdateDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
@@ -189,10 +197,11 @@ public class TicketController {
 					ticket.setAssignedUser(null);
 				}
 			}
+			
+			ticketService.saveTicket(ticket);
+			ticketDetailsId = ticket.getTicketId();
+			return "redirect:/tickets/ticket-details";
 		}
-		ticketService.saveTicket(ticket);
-		
-		return "redirect:/tickets/ticket-details";
 	}
 	/**
 	 * Takes user to ticket modification page
@@ -231,7 +240,8 @@ public class TicketController {
 		ticketService.deleteTicketByTicketId(id);
 		
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-		ticketsToLoad = ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId());
+		ticketsToLoad = ticketService.getTicketsOfProject(userPrincipal.getProjectId());
+		viewPageType = "viewProjectTickets";
 		return "redirect:/tickets/view-tickets";
 	}
 	/**

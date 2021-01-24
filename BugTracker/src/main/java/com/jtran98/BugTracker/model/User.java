@@ -44,9 +44,13 @@ public class User {
 	private String username;
 	@Column(nullable = false)
 	private String password;
-	
+	@Column(nullable = false)
+	private String matchingPassword;
+	@Column(nullable = false)
 	private String firstName;
+	@Column(nullable = false)
 	private String lastName;
+	
 	private boolean isActive;
 	private AuthorityEnum role;
 	
@@ -56,7 +60,6 @@ public class User {
 		return userId;
 	}
 	/**
-	 * 
 	 * @return - list of tickets user has submitted and have not yet been completed (does not include tickets the user has both submitted and taken)
 	 */
 	public Set<Ticket> getSubmittedTicketsInProgressAndNotAssigned(){
@@ -81,6 +84,10 @@ public class User {
 		return assignedInProgress;
 		
 	}
+	/**
+	 * Titles of all the tickets user has taken
+	 * @return
+	 */
 	public String getAssignedTicketTitles() {
 		String titles = "";
 		for(Ticket ticket : assignedTickets) {
@@ -95,6 +102,12 @@ public class User {
 	}
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+	public String getMatchingPassword() {
+		return matchingPassword;
+	}
+	public void setMatchingPassword(String matchingPassword) {
+		this.matchingPassword = matchingPassword;
 	}
 	public Set<Ticket> getAssignedTickets() {
 		return assignedTickets;

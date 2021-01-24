@@ -28,8 +28,10 @@ public class Project {
 	private Set<User> membersList;
 	@OneToMany(mappedBy = "projectSource")
 	private Set<Ticket> ticketsList;
-	
+	@Column(nullable = false)
 	private String projectName;
+	@Column(nullable = false)
+	private String projectDescription;
 	
 	public Project() {
 	}
@@ -39,6 +41,12 @@ public class Project {
 	}
 	public void setProjectId(long projectId) {
 		this.projectId = projectId;
+	}
+	public String getProjectDescription() {
+		return projectDescription;
+	}
+	public void setProjectDescription(String projectDescription) {
+		this.projectDescription = projectDescription;
 	}
 	public Set<User> getMembersList() {
 		return membersList;
