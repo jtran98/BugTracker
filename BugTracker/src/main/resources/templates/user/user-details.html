@@ -14,8 +14,40 @@
 	<h3 th:text="${user.firstName} + '\'s Details'"></h3>
 	<br>
 	
-	<h3 th:unless="${#lists.isEmpty(user.getAssignedTicketsInProgress())}">Assigned Tickets in Progress</h3>
-	<table th:unless="${#lists.isEmpty(user.getAssignedTicketsInProgress())}" class="table table-bordered table-hover">
+	<form th:action="@{/users/assign-user-to-project}" th:object="${userProjectUpdate}">
+		<input type="hidden" th:field="*{userId}">
+		<input type="hidden" th:field="*{username}">
+		<input type="hidden" th:field="*{password}">
+		<input type="hidden" th:field="*{matchingPassword}">
+		<input type="hidden" th:field="*{firstName}">
+		<input type="hidden" th:field="*{lastName}">
+		<input type="hidden" th:field="*{isActive}">
+		<input type="hidden" th:field="*{role}">
+		<select name="projectTeam" id="projectTeam" style="max-width: 250px;" class="form-control" th:field="*{projectTeam}">
+			<option th:each="project : ${projectList}" th:value="${project.projectId}" th:text="${project.projectName}"></option>
+		</select>
+		<br>
+		<button class="btn btn-primary" type="submit">Transfer Project Membership</button>
+	</form>
+	<br>
+	<form th:action="@{/users/assign-user-to-role}" th:object="${userRoleUpdate}">
+		<input type="hidden" th:field="*{userId}">
+		<input type="hidden" th:field="*{username}">
+		<input type="hidden" th:field="*{password}">
+		<input type="hidden" th:field="*{matchingPassword}">
+		<input type="hidden" th:field="*{firstName}">
+		<input type="hidden" th:field="*{lastName}">
+		<input type="hidden" th:field="*{isActive}">
+		<input type="hidden" th:field="*{projectTeam}">
+		<select style="max-width: 250px;" class="form-control" th:field="*{role}">
+			<option th:each="role : ${T(com.jtran98.BugTracker.enums.AuthorityEnum).values()}" th:value="${role}" th:text="${role}"></option>
+		</select>
+		<br>
+		<button class="btn btn-primary" type="submit">Update Role</button>
+	</form>
+	<br>
+	<h3 th:unless="${#lists.isEmpty(user?.getAssignedTicketsInProgress())}">Assigned Tickets in Progress</h3>
+	<table th:unless="${#lists.isEmpty(user?.getAssignedTicketsInProgress())}" class="table table-bordered table-hover">
 	  <thead>
 	    <tr>
 	      <th scope="col">Submitter</th>
@@ -29,7 +61,7 @@
 	    </tr>
 	  </thead>
 	  <tbody>
-	    <tr th:each="ticket : ${#lists.sort(user.getAssignedTicketsInProgress(), ticketComparator)}" th:unless="${#lists.isEmpty(user.getAssignedTicketsInProgress())}">
+	    <tr th:each="ticket : ${#lists.sort(user?.getAssignedTicketsInProgress(), ticketComparator)}" th:unless="${#lists.isEmpty(user?.getAssignedTicketsInProgress())}">
 	      <td th:text="${ticket.submitter?.firstName + ' ' + ticket.submitter?.lastName}" scope="row"></td>
 	      <td th:text="${ticket.priority}" scope="row"></td>
 	      <td th:text="${ticket.title}" scope="row"></td>
@@ -43,8 +75,8 @@
 	  </tbody>
 	</table>
 	
-	<h3 th:unless="${#lists.isEmpty(user.getSubmittedTicketsInProgressAndNotAssigned())}">Unfulfilled Submitted Tickets</h3>
-	<table th:unless="${#lists.isEmpty(user.getSubmittedTicketsInProgressAndNotAssigned())}" class="table table-bordered table-hover">
+	<h3 th:unless="${#lists.isEmpty(user?.getSubmittedTicketsInProgressAndNotAssigned())}">Unfulfilled Submitted Tickets</h3>
+	<table th:unless="${#lists.isEmpty(user?.getSubmittedTicketsInProgressAndNotAssigned())}" class="table table-bordered table-hover">
 	  <thead>
 	    <tr>
 	      <th scope="col">Priority</th>
@@ -57,7 +89,7 @@
 	    </tr>
 	  </thead>
 	  <tbody>
-	    <tr th:each="ticket : ${#lists.sort(user.getSubmittedTicketsInProgressAndNotAssigned(), ticketComparator)}" th:unless="${#lists.isEmpty(user.getSubmittedTicketsInProgressAndNotAssigned())}">
+	    <tr th:each="ticket : ${#lists.sort(user?.getSubmittedTicketsInProgressAndNotAssigned(), ticketComparator)}" th:unless="${#lists.isEmpty(user?.getSubmittedTicketsInProgressAndNotAssigned())}">
 	      <td th:text="${ticket.priority}" scope="row"></td>
 	      <td th:text="${ticket.title}" scope="row"></td>
 	      <td th:text="${ticket.description}" scope="row"></td>

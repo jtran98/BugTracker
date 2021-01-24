@@ -63,4 +63,11 @@ public class UserService {
 	public void saveUser(User user) {
 		this.userRepository.save(user);
 	}
+	/**
+	 * Deletes user by userId
+	 * @param userId - user id
+	 */
+	public void deleteUser(long userId) {
+		this.userRepository.deleteById(userId);
+	}
 }

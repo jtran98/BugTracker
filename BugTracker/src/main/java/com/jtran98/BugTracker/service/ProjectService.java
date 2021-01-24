@@ -14,8 +14,13 @@ public class ProjectService {
 	@Autowired
 	private ProjectRepository projectRepository;
 	
-	public Project getProjectById(long id) {
-		return this.projectRepository.findByProjectId(id);
+	/**
+	 * Finds project by project id
+	 * @param projectId - project id
+	 * @return
+	 */
+	public Project getProjectById(long projectId) {
+		return this.projectRepository.findByProjectId(projectId);
 	}
 	/**
 	 * Returns all projects
@@ -24,10 +29,18 @@ public class ProjectService {
 	public List<Project> getAllProjects(){
 		return projectRepository.findAll();
 	}
+	/**
+	 * Saves project to repository
+	 * @param project
+	 */
 	public void saveProject(Project project) {
 		projectRepository.save(project);
 	}
-	public void deleteProject(long id) {
-		projectRepository.deleteById(id);
+	/**
+	 * Deletes project by project id
+	 * @param id
+	 */
+	public void deleteProject(long projectId) {
+		projectRepository.deleteById(projectId);
 	}
 }

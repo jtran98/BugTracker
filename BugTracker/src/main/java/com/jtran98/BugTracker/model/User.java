@@ -64,6 +64,9 @@ public class User {
 	 * @return - list of tickets user has submitted and have not yet been completed (does not include tickets the user has both submitted and taken)
 	 */
 	public Set<Ticket> getSubmittedTicketsInProgressAndNotAssigned(){
+		if(submittedTickets == null) {
+			return null;
+		}
 		Set<Ticket> submittedInProgress = new HashSet<Ticket>();
 		for(Ticket ticket : submittedTickets) {
 			if(!ticket.getStatus().equals(StatusEnum.DONE) && ticket.getAssignedUser().getUserId() != this.userId) {
@@ -76,6 +79,9 @@ public class User {
 	 * @return - list of tickets user has currently taken
 	 */
 	public Set<Ticket> getAssignedTicketsInProgress() {
+		if(assignedTickets == null) {
+			return null;
+		}
 		Set<Ticket> assignedInProgress = new HashSet<Ticket>();
 		for(Ticket ticket : assignedTickets) {
 			if(ticket.getStatus().equals(StatusEnum.TAKEN)) {
@@ -90,6 +96,9 @@ public class User {
 	 * @return
 	 */
 	public String getAssignedTicketTitles() {
+		if(assignedTickets == null) {
+			return null;
+		}
 		String titles = "";
 		for(Ticket ticket : assignedTickets) {
 			if(ticket.getStatus().equals(StatusEnum.TAKEN))

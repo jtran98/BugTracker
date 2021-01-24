@@ -43,7 +43,7 @@ public class TicketService{
 	 * @param id - ticket id
 	 */
 	public void deleteTicketByTicketId(long id) {
-		ticketRepository.deleteById(id);
+		ticketRepository.deleteByTicketId(id);
 	}
 	
 	/**
@@ -68,8 +68,17 @@ public class TicketService{
 	 * @param userId - id of user
 	 * @return
 	 */
-	public List<Ticket> getTicketsUserSubmitted(Long userId) {
+	public List<Ticket> getTicketsUserSubmitted(long userId) {
 		return ticketRepository.findBySubmitter_UserId(userId);
 	}
-	
+	/**
+	 * Sets all tickets to have null values for their assigned user ids
+	 * @param userId - id of user
+	 */
+	public void removeAllTicketAssignedAssociation(long userId) {
+		for(Ticket ticket : ticketRepository.findByAssignedUser_UserId(userId)) {
+			ticket.setAssignedUser(null);
+			ticketRepository.save(ticket);
+		}
+	}
 }

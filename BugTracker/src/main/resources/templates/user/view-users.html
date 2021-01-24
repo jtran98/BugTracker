@@ -13,7 +13,8 @@
 	<br>
 	<div class="jumbotron jumbotron-fluid">
 	  <div class="container">
-	    <h1 th:if="${viewProjectMembers}" th:text="'Project \'' + ${#authentication.principal.projectTeam?.projectName} +'\' Members'"></h1>
+	    <h1 th:if="${viewProjectUsers}" th:text="'Project \'' + ${#authentication.principal.projectTeam?.projectName} +'\' Members'"></h1>
+	    <h1 th:if="${viewAllUsers}">All Users</h1>
 	  </div>
 	</div>
 	
@@ -23,16 +24,25 @@
 	    <tr>
 	      <th scope="col">Name</th>
 	      <th scope="col">Role</th>
-	      <th scope="col">Assigned Tickets</th>
-	      <th scope="col" colspan="2" align="center">Actions</th>
+	      <th th:if="${viewProjectUsers}" scope="col">Assigned Tickets</th>
+	      <th th:if="${viewAllUsers}" scope="col">Account Status</th>
+	      <th scope="col" colspan="5" style="text-align: center;">Actions</th>
 	    </tr>
 	  </thead>
-	  <tbody th:if="${projectMembers != null}">
-	    <tr th:each="user : ${#lists.sort(projectMembers, userComparator)}">
+	  <tbody th:if="${viewUsers != null}">
+	    <tr th:each="user : ${#lists.sort(viewUsers, userComparator)}">
 	      <td th:text="${user.firstName + ' ' + user.lastName}" scope="row"></td>
 	      <td th:text="${user.role}" scope="row"></td>
-	      <td th:text="${user.getAssignedTicketTitles()}" scope="row"></td>
+	      <td th:if="${viewProjectUsers}" th:text="${user.getAssignedTicketTitles()}" scope="row"></td>
+	      <td th:if=${viewAllUsers} th:text="${user.isActive} ? 'Active' : 'Inactive'" scope="row"></td>
 	      <td><a th:href="@{/users/view-user/{id}(id=${user.userId})}">View</a></td>
+	      <!-- Admin actions -->
+	      <td th:if="${viewAllUsers}" sec:authorize="hasAuthority('ADMINISTRATOR')">
+	      	<div th:if="${user.userId != #authentication.principal.userId}">
+	      	<a th:if="${!user.isActive}" th:href="@{/users/enable-account/{id}(id=${user.userId})}" class="btn btn-success">Enable Account</a>
+	      	<a th:if="${user.isActive}"th:href="@{/users/disable-account/{id}(id=${user.userId})}" class="btn btn-warning">Disable Account</a>
+	      	</div>
+	      </td>
 	    </tr>
 	  </tbody>
 	</table>
