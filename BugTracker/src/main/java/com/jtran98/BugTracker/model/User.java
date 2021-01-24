@@ -50,8 +50,9 @@ public class User {
 	private String firstName;
 	@Column(nullable = false)
 	private String lastName;
-	
+	@Column(nullable = false)
 	private boolean isActive;
+	@Column(nullable = false)
 	private AuthorityEnum role;
 	
 	public User() {}
@@ -151,7 +152,14 @@ public class User {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	/**
+	 * IMPORTANT:
+	 * Both getters are required due to how spring works
+	 */
 	public boolean isActive() {
+		return isActive;
+	}
+	public boolean getIsActive() {
 		return isActive;
 	}
 	public void setActive(boolean isActive) {

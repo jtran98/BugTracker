@@ -1,6 +1,7 @@
 package com.jtran98.BugTracker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class HomePageController {
 	 */
 	@GetMapping("index")
 	public String viewHomePage() {
-		return "/index";
+		return "/index.html";
 	}
 	/**
 	 * Login page
@@ -33,7 +34,7 @@ public class HomePageController {
 	 */
 	@GetMapping("login")
 	public String login() {
-		return "/login";
+		return "/login.html";
 	}
 	/**
 	 * Login page failure mapping
@@ -43,6 +44,15 @@ public class HomePageController {
 	@GetMapping("login-failed")
 	public String loginFailed(Model model){
 		model.addAttribute("loginFailed", true);
-		return "/login";
+		return "/login.html";
+	}
+	/**
+	 * Logs the user out
+	 * @return
+	 */
+	@GetMapping("logout")
+	public String logout() {
+		SecurityContextHolder.getContext().setAuthentication(null);
+		return "/login.html";
 	}
 }

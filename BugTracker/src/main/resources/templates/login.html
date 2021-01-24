@@ -26,7 +26,9 @@
                         <div th:if="${param.logout}" class="alert alert-success">
                             You have been logged out.
                         </div>
-
+                        <div th:if="${changedSettings}" class="alert alert-success">
+                            Changes made successfully.
+                        </div>
                         <!-- Login Controls -->
                         <div class="form-group">
                             <label for="username">Username</label>

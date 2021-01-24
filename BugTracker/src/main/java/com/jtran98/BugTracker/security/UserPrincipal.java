@@ -27,6 +27,15 @@ public class UserPrincipal implements UserDetails{
 	public User getUser() {
 		return this.user;
 	}
+	public void setPassword(String password) {
+		this.user.setPassword(password);
+	}
+	public void setMatchingPassword(String matchingPassword) {
+		this.user.setMatchingPassword(matchingPassword);
+	}
+	public void setUsername(String username) {
+		this.user.setUsername(username);
+	}
 	public String getFirstName() {
 		return user.getFirstName();
 	}

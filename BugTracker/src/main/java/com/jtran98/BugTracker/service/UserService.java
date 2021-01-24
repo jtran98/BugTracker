@@ -48,6 +48,18 @@ public class UserService {
 		}
 		return false;
 	}
+	/**
+	 * Finds first user with username (should only be one max)
+	 * @param username
+	 * @return
+	 */
+	public User findUserWithUsername(String username) {
+		return this.userRepository.findFirstByUsername(username);
+	}
+	/**
+	 * Saves user to repository
+	 * @param user
+	 */
 	public void saveUser(User user) {
 		this.userRepository.save(user);
 	}

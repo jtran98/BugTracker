@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.jtran98.BugTracker.enums.AuthorityEnum;
 import com.jtran98.BugTracker.enums.StatusEnum;
 import com.jtran98.BugTracker.model.CommentEntry;
 import com.jtran98.BugTracker.model.Ticket;
@@ -155,13 +156,13 @@ public class TicketController {
 			ticket.setMostRecentUpdateDate("N/A");
 			ticket.setProjectSource(userPrincipal.getProjectTeam());
 			ticket.setSubmitter(userPrincipal.getUser());;
-			if(ticket.getStatus().toString().equalsIgnoreCase(StatusEnum.TAKEN.toString())) {
+			if(ticket.getStatus().toString().equalsIgnoreCase(StatusEnum.TAKEN.toString()) && userPrincipal.getRole() != AuthorityEnum.SUBMITTER) {
 				ticket.setAssignedUser(userPrincipal.getUser());
 			}
 			
 			ticketService.saveTicket(ticket);
-			viewPageType = "viewAssignedTickets";
-			ticketsToLoad = ticketService.getTicketsOfAssignedUser(userPrincipal.getUserId());
+			viewPageType = "viewSubmittedTickets";
+			ticketsToLoad = ticketService.getTicketsUserSubmitted(userPrincipal.getUserId());
 			return "redirect:/tickets/view-tickets";
 		}
 		else {
@@ -190,7 +191,7 @@ public class TicketController {
 				logEntryService.makeLogForChange(userPrincipal.getUser(), ticket, "Status", oldTicket.getStatus().toString(),
 						ticket.getStatus().toString(), java.time.LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
 				//If status gets changed to either TAKEN or OPEN, adjust assigned user accordingly
-				if(ticket.getStatus().equals(StatusEnum.TAKEN)){
+				if(ticket.getStatus().equals(StatusEnum.TAKEN) && userPrincipal.getRole() != AuthorityEnum.SUBMITTER){
 					ticket.setAssignedUser(userPrincipal.getUser());
 				}
 				else if(ticket.getStatus().equals(StatusEnum.OPEN)){
@@ -221,7 +222,7 @@ public class TicketController {
 	 * @return
 	 */
 	@GetMapping("/update-ticket/{id}")
-	public String updateTicket(@PathVariable (value = "id") long id, Model model) {
+	public String updateTicketForm(@PathVariable (value = "id") long id, Model model) {
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		model.addAttribute("modifyTicket", ticket);
 		return "/ticket/modify-ticket.html";
