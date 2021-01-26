@@ -34,6 +34,7 @@ import com.jtran98.BugTracker.service.LogEntryService;
 import com.jtran98.BugTracker.service.TicketFileService;
 import com.jtran98.BugTracker.service.TicketService;
 import com.jtran98.BugTracker.util.TicketComparator;
+import com.jtran98.BugTracker.util.TicketEndpointConstants;
 
 /**
  * Controller for all mappings relating to tickets
@@ -41,7 +42,7 @@ import com.jtran98.BugTracker.util.TicketComparator;
  *
  */
 @Controller
-@RequestMapping("/tickets")
+@RequestMapping(TicketEndpointConstants.BASE)
 public class TicketController {
 	
 	@Autowired
@@ -68,7 +69,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/view-tickets")
+	@GetMapping(TicketEndpointConstants.VIEW_TICKETS)
 	public String viewTickets(Model model) {
 		model.addAttribute("viewTickets", ticketsToLoad);
 		model.addAttribute(viewPageType, true);
@@ -80,7 +81,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/ticket-details")
+	@GetMapping(TicketEndpointConstants.TICKET_DETAILS)
 	public String ticketDetails(Model model) {
 		model.addAttribute("ticketDetails", ticketService.getTicketByTicketId(ticketDetailsId));
 		model.addAttribute("commentEntries", commentEntryService.getCommentsOfTicket(ticketDetailsId));
@@ -94,7 +95,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/manage-tickets")
+	@GetMapping(TicketEndpointConstants.MANAGE_TICKETS)
 	public String getAllTickets() {
 		viewPageType = "viewAllTickets";
 		ticketsToLoad = ticketService.getAllTickets();
@@ -106,7 +107,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/my-assigned-tickets")
+	@GetMapping(TicketEndpointConstants.ASSIGNED_TICKETS)
 	public String getAssignedTicketsOfCurrentUser(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		viewPageType = "viewAssignedTickets";
@@ -118,7 +119,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/my-submitted-tickets")
+	@GetMapping(TicketEndpointConstants.SUBMITTED_TICKETS)
 	public String getSubmittedTicketsOfCurrentUser(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		viewPageType = "viewSubmittedTickets";
@@ -131,7 +132,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/my-project-tickets")
+	@GetMapping(TicketEndpointConstants.PROJECT_TICKETS)
 	public String getTicketsByProjectId(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		viewPageType = "viewProjectTickets";
@@ -147,7 +148,7 @@ public class TicketController {
 	 * @param authentication
 	 * @return
 	 */
-	@PostMapping("/save-ticket")
+	@PostMapping(TicketEndpointConstants.SAVE_TICKET)
 	public String makeNewTicket(@ModelAttribute("modifyTicket") Ticket ticket,  Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		//If ticket is new, set the creation date, submitter id, and project source as the submitter's current project. Otherwise, log the changes made to the ticket
@@ -209,7 +210,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/submit-new-ticket")
+	@GetMapping(TicketEndpointConstants.SUBMIT_NEW_TICKET)
 	public String createNewTicketForm(Model model) {
 		Ticket ticket = new Ticket();
 		model.addAttribute("modifyTicket", ticket);
@@ -221,7 +222,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/update-ticket/{id}")
+	@GetMapping(TicketEndpointConstants.UPDATE_TICKET+"/{id}")
 	public String updateTicketForm(@PathVariable (value = "id") long id, Model model) {
 		Ticket ticket = ticketService.getTicketByTicketId(id);
 		model.addAttribute("modifyTicket", ticket);
@@ -232,7 +233,7 @@ public class TicketController {
 	 * @param id - id of ticket
 	 * @return
 	 */
-	@GetMapping("/delete-ticket/{id}")
+	@GetMapping(TicketEndpointConstants.DELETE_TICKET+"/{id}")
 	public String deleteTicket(@PathVariable (value = "id") long id, Model model, Authentication authentication) {
 		//Deletes all foreign constraint entities first
 		commentEntryService.deleteAllCommentsOfTicket(id);
@@ -251,7 +252,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/view-details/{id}")
+	@GetMapping(TicketEndpointConstants.VIEW_DETAILS+"/{id}")
 	public String viewTicketDetails(@PathVariable (value = "id") long id, Model model) {
 		ticketDetailsId = id;
 		return "redirect:/tickets/ticket-details";
@@ -264,7 +265,7 @@ public class TicketController {
 	 * @param comment - comment text
 	 * @return
 	 */
-	@PostMapping("/make-comment/{id}")
+	@PostMapping(TicketEndpointConstants.MAKE_COMMENT+"/{id}")
 	public String createComment(@PathVariable (value = "id") long id, Model model, Authentication authentication, CommentEntry comment) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		comment.setCommentOrigin(ticketService.getTicketByTicketId(id));
@@ -283,7 +284,7 @@ public class TicketController {
 	 * @param authentication
 	 * @return
 	 */
-	@PostMapping("/upload-file/{id}")
+	@PostMapping(TicketEndpointConstants.UPLOAD_FILE+"/{id}")
 	public String submitFile(@PathVariable(value = "id") long id, @RequestParam("file") MultipartFile file, Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		Ticket ticket = ticketService.getTicketByTicketId(id);
@@ -304,7 +305,7 @@ public class TicketController {
 	 * @return
 	 * @throws IOException
 	 */
-	@GetMapping("/download-file/{id}")
+	@GetMapping(TicketEndpointConstants.DOWNLOAD_FILE+"/{id}")
     public String downloadFile(@PathVariable(value = "id") long id, HttpServletResponse response, Model model) throws IOException {
 		
         TicketFile ticketFile = ticketFileService.getFile(id);
@@ -328,7 +329,7 @@ public class TicketController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/drop-ticket/{id}")
+	@GetMapping(TicketEndpointConstants.DROP_TICKET+"/{id}")
 	public String assignTicketToUser(@PathVariable (value = "id") long id, Model model, Authentication authentication) {
 		//Updates ticket
 		Ticket ticket = ticketService.getTicketByTicketId(id);
@@ -351,7 +352,7 @@ public class TicketController {
 	 * @param authentication
 	 * @return
 	 */
-	@GetMapping("/take-ticket/{id}")
+	@GetMapping(TicketEndpointConstants.TAKE_TICKET+"/{id}")
 	public String dropTicketOfUser(@PathVariable (value = "id") long id, Model model, Authentication authentication) {
 		//Updates ticket
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();

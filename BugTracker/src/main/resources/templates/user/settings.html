@@ -15,7 +15,7 @@
 <div style="max-width: 400px;">
 	<h3>Change Username</h3>
 	<br>
-	<form th:action="@{/users/update-username}" method="POST" th:object="${user}">
+	<form th:action="@{/users/settings/update-username}" method="POST" th:object="${user}">
 		<input type="hidden" th:field="*{userId}">
 		<input type="hidden" th:field="*{projectTeam}">
 		<input type="hidden" th:field="*{password}">
@@ -44,7 +44,7 @@
 	<br>
 	<h3>Change Password</h3>
 	<br>
-	<form th:action="@{/users/update-password}" method="POST" th:object="${user}">
+	<form th:action="@{/users/settings/update-password}" method="POST" th:object="${user}">
 		<input type="hidden" th:field="*{userId}">
 		<input type="hidden" th:field="*{projectTeam}">
 		<input type="hidden" th:field="*{username}">

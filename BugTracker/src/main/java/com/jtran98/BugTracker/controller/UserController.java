@@ -23,9 +23,10 @@ import com.jtran98.BugTracker.service.TicketService;
 import com.jtran98.BugTracker.service.UserService;
 import com.jtran98.BugTracker.util.TicketComparator;
 import com.jtran98.BugTracker.util.UserComparator;
+import com.jtran98.BugTracker.util.UserEndpointConstants;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping(UserEndpointConstants.BASE)
 public class UserController {
 	
 	@Autowired
@@ -56,7 +57,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/user-details")
+	@GetMapping(UserEndpointConstants.REDIRECT_VIEW_USER)
 	public String viewUserDetails(Model model) {
 		model.addAttribute("user", userService.getUser(userDetailsId));
 		model.addAttribute("userProjectUpdate", userService.getUser(userDetailsId));
@@ -65,7 +66,12 @@ public class UserController {
 		model.addAttribute("ticketComparator", ticketComparator);
 		return "/user/user-details.html";
 	}
-	@GetMapping("/view-users")
+	/**
+	 * Redirect for viewing a list of users
+	 * @param model
+	 * @return
+	 */
+	@GetMapping(UserEndpointConstants.REDIRECT_VIEW_USERS)
 	public String viewUsers(Model model) {
 		model.addAttribute(viewUsersPage, true);
 		model.addAttribute("viewUsers", usersToLoad);
@@ -79,7 +85,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@PostMapping("/update-password")
+	@PostMapping(UserEndpointConstants.UPDATE_PASSWORD)
 	public String updatePassword(@ModelAttribute("user") User user, Model model) {
 		if(user.getPassword().equals("")) {
 			model.addAttribute("passwordNull", true);
@@ -108,7 +114,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@PostMapping("/update-username")
+	@PostMapping(UserEndpointConstants.UPDATE_USERNAME)
 	public String updateUsername(@ModelAttribute("user") User user, Model model) {
 		if(user.getUsername().equals("")) {
 			model.addAttribute("usernameNull", true);
@@ -134,7 +140,7 @@ public class UserController {
 	 * @param authentication
 	 * @return
 	 */
-	@GetMapping("/settings")
+	@GetMapping(UserEndpointConstants.SETTINGS)
 	public String viewSettings(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute("user", userPrincipal.getUser());
@@ -146,7 +152,7 @@ public class UserController {
 	 * @param authentication
 	 * @return
 	 */
-	@GetMapping("/manage-users")
+	@GetMapping(UserEndpointConstants.MANAGE_USERS)
 	public String viewAllUsers(Model model, Authentication authentication) {
 		viewUsersPage = VIEW_USERS_ALL_PAGE;
 		usersToLoad = userService.getAllUsers();
@@ -157,7 +163,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/my-project-members")
+	@GetMapping(UserEndpointConstants.PROJECT_MEMBERS)
 	public String viewProjectMembers(Model model, Authentication authentication) {
 		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 		model.addAttribute(VIEW_USERS_PROJECT_PAGE, true);
@@ -172,7 +178,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/disable-account/{id}")
+	@GetMapping(UserEndpointConstants.DISABLE_ACCOUNT+"/{id}")
 	public String disableUserAccount(@PathVariable(value = "id") long id, Model model) {
 		User user = userService.getUser(id);
 		user.setActive(false);
@@ -190,7 +196,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/enable-account/{id}")
+	@GetMapping(UserEndpointConstants.ENABLE_ACCOUNT+"/{id}")
 	public String enableUserAccount(@PathVariable(value = "id") long id, Model model) {
 		User user = userService.getUser(id);
 		user.setActive(true);
@@ -206,7 +212,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/assign-user-to-project")
+	@GetMapping(UserEndpointConstants.ASSIGN_USER_TO_PROJECT)
 	public String assignUserToProject(User user, Model model) {
 		user.setActive(true);
 		userService.saveUser(user);
@@ -220,7 +226,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/assign-user-to-role")
+	@GetMapping(UserEndpointConstants.ASSIGN_USER_TO_ROLE)
 	public String assignUserToRole(User user, Model model) {
 		user.setActive(true);
 		userService.saveUser(user);
@@ -235,7 +241,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/view-user/{id}")
+	@GetMapping(UserEndpointConstants.USER_DETAILS+"/{id}")
 	public String viewUser(@PathVariable (value = "id") long id, Model model) {
 		
 		userDetailsId = id;
@@ -257,7 +263,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@PostMapping("/save-user")
+	@PostMapping(UserEndpointConstants.SAVE_USER)
 	public String saveUser(@ModelAttribute("newUser") User user, Model model) {
 		if(user.getFirstName().equals("")) {
 			model.addAttribute("firstNameNull", true);

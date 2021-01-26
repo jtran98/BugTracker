@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.jtran98.BugTracker.security.UserPrincipalDetailsService;
+import com.jtran98.BugTracker.util.HomeEndpointConstants;
 
 /**
  * Controller for misc mappings like index and login
@@ -15,7 +16,7 @@ import com.jtran98.BugTracker.security.UserPrincipalDetailsService;
  *
  */
 @Controller
-@RequestMapping("/")
+@RequestMapping(HomeEndpointConstants.BASE)
 public class HomePageController {
 	
 	@Autowired
@@ -24,7 +25,7 @@ public class HomePageController {
 	 * Home page
 	 * @return
 	 */
-	@GetMapping("index")
+	@GetMapping(HomeEndpointConstants.INDEX)
 	public String viewHomePage() {
 		return "/index.html";
 	}
@@ -32,7 +33,7 @@ public class HomePageController {
 	 * Login page
 	 * @return
 	 */
-	@GetMapping("login")
+	@GetMapping(HomeEndpointConstants.LOGIN)
 	public String login() {
 		return "/login.html";
 	}
@@ -41,7 +42,7 @@ public class HomePageController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("login-failed")
+	@GetMapping(HomeEndpointConstants.LOGIN_FAILED)
 	public String loginFailed(Model model){
 		model.addAttribute("loginFailed", true);
 		return "/login.html";
@@ -50,7 +51,7 @@ public class HomePageController {
 	 * Logs the user out
 	 * @return
 	 */
-	@GetMapping("logout")
+	@GetMapping(HomeEndpointConstants.LOGOUT)
 	public String logout() {
 		SecurityContextHolder.getContext().setAuthentication(null);
 		return "/login.html";

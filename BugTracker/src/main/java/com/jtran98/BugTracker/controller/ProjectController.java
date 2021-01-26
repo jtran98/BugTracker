@@ -18,9 +18,10 @@ import com.jtran98.BugTracker.service.ProjectService;
 import com.jtran98.BugTracker.service.TicketService;
 import com.jtran98.BugTracker.service.UserService;
 import com.jtran98.BugTracker.util.ProjectComparator;
+import com.jtran98.BugTracker.util.ProjectEndpointConstants;
 
 @Controller
-@RequestMapping("/projects")
+@RequestMapping(ProjectEndpointConstants.BASE)
 public class ProjectController {
 	
 	@Autowired
@@ -38,7 +39,7 @@ public class ProjectController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/manage-projects")
+	@GetMapping(ProjectEndpointConstants.MANAGE_PROJECTS)
 	public String getAllProjects(Model model) {
 		model.addAttribute("projects", projectService.getAllProjects());
 		model.addAttribute("projectComparator", projectComparator);
@@ -50,7 +51,7 @@ public class ProjectController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/update-project/{id}")
+	@GetMapping(ProjectEndpointConstants.UPDATE_PROJECT+"/{id}")
 	public String renameProject(@PathVariable(value = "id") long id,  Model model) {
 		model.addAttribute("modifyProject", projectService.getProjectById(id));
 		return "/project/modify-project.html";
@@ -72,7 +73,7 @@ public class ProjectController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/delete-project/{id}")
+	@GetMapping(ProjectEndpointConstants.DELETE_PROJECT+"/{id}")
 	public String deleteProject(@PathVariable(value = "id") long id, Model model) {
 		for(Ticket ticket : ticketService.getTicketsOfProject(id)) {
 			ticket.setProjectSource(null);
@@ -91,7 +92,7 @@ public class ProjectController {
 	 * @param model
 	 * @return
 	 */
-	@PostMapping("/save-project")
+	@PostMapping(ProjectEndpointConstants.SAVE_PROJECT)
 	public String saveProject(@ModelAttribute("modifyProject") Project project, Model model) {
 		projectService.saveProject(project);
 		model.addAttribute("projects", projectService.getAllProjects());
