@@ -1,5 +1,5 @@
 # BugTracker
-Spring Bug Tracker Web Application.
+Spring Framework Bug Tracker Web Application.
 
 This is a web application that allows users to track issues.
 
