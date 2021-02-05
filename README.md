@@ -1,16 +1,28 @@
 # BugTracker
-Spring Bug Tracker Web Application
+Spring Bug Tracker Web Application.
 
-Issue Tracker Web Application.
+This is a web application that allows users to track issues.
 
-Users logged in have access to different CRUD operations depending on their account authorities.
+## Role Based Permissions
+---
+Users logged in have access to different features depending on their account authorities.
 
-Submitters are able to submit/edit (their own) tickets, leave comments, upload files.
+### **Submitters**
+Able to submit/edit (their own) tickets, leave comments, upload files. (All other roles have these capabilities as well)
 
-Developers are allowed to take tickets and view project tickets.
+### **Developers**
+Allowed to take tickets and view all tickets of the project they're currently assigned to.
 
-Project Managers are allowed to view project members.
+### **Project Managers**
+Allowed to view project members and relevant information pertaining to them. They can delete tickets as well.
 
-Admins are able to manage all accounts and tickets.
+### **Admins**
+Able to manage all accounts and tickets. Some authorities include the ability to disable user accounts, create new project teams, and assigning users to different teams.
 
-Secured through Spring Security, and holds data in a persistent (mySQL) database, accessed through JPA/Hibernate.
+---
+
+## Other Features
+
+The application is secured through Spring Security, using form based authentication and authorization.
+
+Data is stored in a persistent (mySQL) database, which accessed through JPA/Hibernate.
