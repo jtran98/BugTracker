@@ -4,7 +4,9 @@ Spring Framework Bug Tracker Web Application.
 This is a web application that allows users to track issues.
 
 ## Role Based Permissions
+
 ---
+
 Users logged in have access to different features depending on their account authorities.
 
 ### **Submitters**
