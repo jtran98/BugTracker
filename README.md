@@ -19,8 +19,6 @@ Allowed to view project members and relevant information pertaining to them. The
 ### **Admins**
 Able to manage all accounts and tickets. Some authorities include the ability to disable user accounts, create new project teams, and assigning users to different teams.
 
----
-
 ## Other Features
 
 The application is secured through Spring Security, using form based authentication and authorization.
