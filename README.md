@@ -17,7 +17,7 @@ Allowed to take tickets and view all tickets of the project they're currently as
 Allowed to view project members and relevant information pertaining to them. They can delete tickets as well.
 
 ### **Admins**
-Able to manage all accounts and tickets. Some authorities include the ability to disable user accounts, create new project teams, and assigning users to different teams.
+Able to manage all accounts and tickets. Some authorities include the ability to disable user accounts, create new project teams, and assign users to different teams.
 
 ## Other Features
 
