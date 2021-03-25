@@ -245,7 +245,7 @@ public class UserController {
 	public String viewUser(@PathVariable (value = "id") long id, Model model) {
 		
 		userDetailsId = id;
-		return "redirect:/users/user-details";
+		return "redirect:/users/view-user";
 	}
 	/**
 	 * Takes you to the form to create a new user

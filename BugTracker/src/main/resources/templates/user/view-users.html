@@ -35,7 +35,7 @@
 	      <td th:text="${user.role}" scope="row"></td>
 	      <td th:if="${viewProjectUsers}" th:text="${user?.getAssignedTicketTitles()}" scope="row"></td>
 	      <td th:if=${viewAllUsers} th:text="${user.isActive} ? 'Active' : 'Inactive'" scope="row"></td>
-	      <td><a th:href="@{/users/view-user/{id}(id=${user.userId})}">View</a></td>
+	      <td><a th:href="@{/users/user-details/{id}(id=${user.userId})}">View</a></td>
 	      <!-- Admin actions -->
 	      <td th:if="${viewAllUsers}" sec:authorize="hasAuthority('ADMINISTRATOR')">
 	      	<div th:if="${user.userId != #authentication.principal.userId}">
