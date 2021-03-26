@@ -31,7 +31,6 @@ public class BugTrackerApplication {
                 context.addConstraint(securityConstraint);
             }
         };
-
         // Add HTTP to HTTPS redirect
         tomcat.addAdditionalTomcatConnectors(httpToHttpsRedirectConnector());
 
