@@ -218,7 +218,7 @@ public class UserController {
 		userService.saveUser(user);
 		
 		userDetailsId = user.getUserId();
-		return "redirect:/users/user-details";
+		return "redirect:/users/view-user";
 	}
 	/**
 	 * Assigns user to role
@@ -232,7 +232,7 @@ public class UserController {
 		userService.saveUser(user);
 		
 		userDetailsId = user.getUserId();
-		return "redirect:/users/user-details";
+		return "redirect:/users/view-user";
 	}
 	
 	/**
