@@ -25,6 +25,7 @@
 	      <th scope="col">Name</th>
 	      <th scope="col">Role</th>
 	      <th th:if="${viewProjectUsers}" scope="col">Assigned Tickets</th>
+	      <th th:if="${viewAllUsers}" scope="col">Project Team</th>
 	      <th th:if="${viewAllUsers}" scope="col">Account Status</th>
 	      <th scope="col" colspan="5" style="text-align: center;">Actions</th>
 	    </tr>
@@ -34,6 +35,7 @@
 	      <td th:text="${user.firstName + ' ' + user.lastName}" scope="row"></td>
 	      <td th:text="${user.role}" scope="row"></td>
 	      <td th:if="${viewProjectUsers}" th:text="${user?.getAssignedTicketTitles()}" scope="row"></td>
+	      <td th:if=${viewAllUsers} th:text="${user.projectTeam?.projectName}" scope="row"></td>
 	      <td th:if=${viewAllUsers} th:text="${user.isActive} ? 'Active' : 'Inactive'" scope="row"></td>
 	      <td><a th:href="@{/users/user-details/{id}(id=${user.userId})}">View</a></td>
 	      <!-- Admin actions -->
