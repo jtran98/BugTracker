@@ -25,6 +25,7 @@
 	<table class="table table-bordered table-hover">
 	  <thead>
 	    <tr>
+	      <th scope="row">Project</th>
 	      <th scope="col">Priority</th>
 	      <th scope="col">Title</th>
 	      <th scope="col">Description</th>
@@ -35,6 +36,7 @@
 	  </thead>
 	  <tbody th:if="${viewTickets != null}">
 	    <tr th:each="ticket : ${#lists.sort(viewTickets, ticketComparator)}">
+	      <td th:if="${viewAllTickets}" th:text="${ticket.projectSource?.projectName}" scope="row"></td>
 	      <td th:text="${ticket.priority}" scope="row"></td>
 	      <td th:text="${ticket.title}" scope="row"></td>
 	      <td th:text="${ticket.description}" scope="row"></td>
