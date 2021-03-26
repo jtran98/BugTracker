@@ -188,7 +188,7 @@ public class UserController {
 		
 		usersToLoad = userService.getAllUsers();
 		viewUsersPage = VIEW_USERS_ALL_PAGE;
-		return "redirect:/user/view-users";
+		return "redirect:/users/view-users";
 	}
 	/**
 	 * Re-enables account. Does not reassign any tickets or the project they lost
