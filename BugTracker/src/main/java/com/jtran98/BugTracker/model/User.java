@@ -69,8 +69,10 @@ public class User {
 		}
 		Set<Ticket> submittedInProgress = new HashSet<Ticket>();
 		for(Ticket ticket : submittedTickets) {
-			if(!ticket.getStatus().equals(StatusEnum.DONE) && ticket.getAssignedUser().getUserId() != this.userId) {
-				submittedInProgress.add(ticket);
+			if(ticket.getAssignedUser() != null) {
+				if(!ticket.getStatus().equals(StatusEnum.DONE) && ticket.getAssignedUser().getUserId() != this.userId) {
+					submittedInProgress.add(ticket);
+				}
 			}
 		}
 		return submittedInProgress;
