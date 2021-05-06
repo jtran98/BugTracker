@@ -61,7 +61,7 @@ public class ProjectController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/create-new-project")
+	@GetMapping(ProjectEndpointConstants.CREATE_NEW_PROJECT)
 	public String createNewProject(Model model) {
 		Project project = new Project();
 		model.addAttribute("modifyProject", project);
